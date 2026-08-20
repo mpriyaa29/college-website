@@ -13,8 +13,6 @@ export const NAV_ITEMS = [
       { label: 'Management',   path: '/about/management' },
       { label: 'Principal',    path: '/about/principal' },
       { label: 'Core Values',  path: '/about/core-values' },
-      { label: 'Media & Press', path: '/about/media-press' },
-      { label: 'Events',       path: '/about/events' },
       { label: 'CSR',          path: '/about/csr' },
     ],
   },
