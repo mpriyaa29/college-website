@@ -16,6 +16,8 @@ import MobileMenu from './MobileMenu';
  * ──────────────────────────────────────────────────────────────────
  */
 
+const LOGO_URL = 'https://skcet.ac.in/wp-content/uploads/2024/08/skcet-logo.png';
+
 const navVariants = {
   hidden:  { opacity: 0, y: -16 },
   visible: {
@@ -56,25 +58,55 @@ const Navigation = () => {
         role="banner"
       >
         <div className="w-full px-4 sm:px-6 lg:px-10">
-          <div className="flex items-center justify-between h-14 lg:h-16">
+          <div className="flex items-center justify-between h-20 lg:h-24">
+            
+            {/* ── Logo (Left) ── */}
+            <div className="hidden lg:flex flex-shrink-0 mr-8">
+              <a href="/" className="group block">
+                <img
+                  src={LOGO_URL}
+                  alt="SKCET Logo"
+                  className="h-16 xl:h-[72px] w-auto object-contain filter brightness-110 drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                  loading="eager"
+                />
+              </a>
+            </div>
 
-            {/* ── Desktop Navigation — full width, evenly spaced ── */}
+            {/* ── Desktop Navigation (Right, 2 Rows) ── */}
             <nav
-              className="hidden lg:flex flex-1 items-center justify-between"
+              className="hidden lg:flex flex-1 flex-col items-end justify-center gap-1.5 xl:gap-2"
               aria-label="Main navigation"
             >
-              <ul className="flex items-center justify-between w-full">
-                {NAV_ITEMS.map((item) => (
-                  <NavItem key={item.id} item={item} />
-                ))}
+              {/* Top Row */}
+              <ul className="flex items-center gap-2 xl:gap-5 justify-end">
+                {['about', 'achievements', 'accreditations', 'online-payment', 'placements', 'documents']
+                  .map(id => NAV_ITEMS.find(item => item.id === id))
+                  .filter(Boolean)
+                  .map(item => (
+                    <NavItem key={item.id} item={item} />
+                  ))}
+              </ul>
+              
+              {/* Bottom Row */}
+              <ul className="flex items-center gap-2 xl:gap-5 justify-end">
+                {['academics', 'admissions', 'student-life', 'innovations', 'research', 'exams']
+                  .map(id => NAV_ITEMS.find(item => item.id === id))
+                  .filter(Boolean)
+                  .map(item => (
+                    <NavItem key={item.id} item={item} />
+                  ))}
               </ul>
             </nav>
 
-            {/* ── Mobile: site name (lightweight) + hamburger ── */}
+            {/* ── Mobile: Logo (Left) + hamburger (Right) ── */}
             <div className="flex lg:hidden items-center justify-between w-full">
-              <span className="text-white/70 text-sm font-medium tracking-widest uppercase">
-                SKCET
-              </span>
+              <a href="/" className="block">
+                <img
+                  src={LOGO_URL}
+                  alt="SKCET Logo"
+                  className="h-12 w-auto object-contain filter brightness-110"
+                />
+              </a>
               <button
                 className="
                   flex items-center justify-center

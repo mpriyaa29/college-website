@@ -16,8 +16,8 @@ export const NavItem = ({ item }) => {
         to={item.path}
         className={`
           flex items-center
-          text-xs xl:text-sm font-medium tracking-wide
-          py-2 px-2 xl:px-3
+          text-[11px] lg:text-xs xl:text-sm font-medium tracking-wide
+          py-1 px-1.5 xl:px-2.5
           nav-item-hover
           transition-colors duration-200
           whitespace-nowrap

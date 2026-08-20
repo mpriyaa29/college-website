@@ -45,28 +45,6 @@ const HeroContent = () => {
       initial="hidden"
       animate="visible"
     >
-      {/* ══ LOGO — centred ═══════════════════════════════════════════ */}
-      <motion.div className="mb-8 sm:mb-10 text-center" variants={logoVariant}>
-        <img
-          src={LOGO_URL}
-          alt="Sri Krishna College of Engineering and Technology — SKCET"
-          className="
-            h-16 sm:h-20 md:h-24
-            w-auto object-contain
-            drop-shadow-[0_4px_24px_rgba(201,162,39,0.4)]
-            filter brightness-110 mx-auto
-          "
-          loading="eager"
-          decoding="async"
-        />
-      </motion.div>
-
-      {/* ── thin gold rule ── */}
-      <motion.div
-        className="w-20 h-px bg-gradient-to-r from-transparent via-skcet-gold to-transparent mb-10 sm:mb-12"
-        variants={fadeUp}
-      />
-
       {/* ══ CENTERED CONTENT ═══════════════════════════════════════════ */}
       {/* Year label */}
       <motion.p

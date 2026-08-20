@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
+import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
 import Placeholder from './pages/Placeholder/Placeholder';
@@ -31,6 +32,8 @@ const App = () => {
         {/* ── 404 catch-all ── */}
         <Route path="*" element={<Placeholder />} />
       </Routes>
+
+      <Footer />
     </BrowserRouter>
   );
 };
