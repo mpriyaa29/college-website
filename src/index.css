@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base resets ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #0d1529;
+  color: #ffffff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Custom scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1529;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a227;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e4bc45;
+}
+
+/* ─── Utility classes ──────────────────────────────────────────── */
+@layer utilities {
+  .glass {
+    background: rgba(13, 21, 41, 0.45);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.15);
+  }
+
+  .glass-scrolled {
+    background: rgba(13, 21, 41, 0.85);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border-bottom: 1px solid rgba(201, 162, 39, 0.25);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #c9a227 0%, #e4bc45 50%, #c9a227 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(10, 18, 40, 0.7) 0%,
+      rgba(10, 18, 40, 0.45) 40%,
+      rgba(10, 18, 40, 0.55) 70%,
+      rgba(10, 18, 40, 0.85) 100%
+    );
+  }
+
+  .nav-item-hover {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0
+           after:bg-gradient-to-r after:from-skcet-gold after:to-skcet-gold-light
+           after:transition-all after:duration-300 hover:after:w-full;
+  }
+}
+
+/* ─── Video fill ───────────────────────────────────────────────── */
+.video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ─── Mega-menu ────────────────────────────────────────────────── */
+.mega-menu-enter {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.mega-menu-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.mega-menu-exit {
+  opacity: 1;
+}
+.mega-menu-exit-active {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+/* ─── Mobile menu overlay ──────────────────────────────────────── */
+.mobile-menu-enter {
+  transform: translateX(100%);
+}
+.mobile-menu-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-menu-exit {
+  transform: translateX(0);
+}
+.mobile-menu-exit-active {
+  transform: translateX(100%);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Scroll indicator bounce ──────────────────────────────────── */
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%       { transform: translateY(8px); opacity: 1; }
+}
+.scroll-bounce {
+  animation: scrollBounce 1.8s ease-in-out infinite;
+}
+
+/* ─── Hero text reveal ─────────────────────────────────────────── */
+@keyframes clipReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
+}
+
+/* ─── Prevent layout shift on video fallback ───────────────────── */
+.hero-section {
+  position: relative;
+  width: 100vw;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
