@@ -1,14 +1,13 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronDown, ChevronRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import { NAV_ITEMS } from '../../data/navigation';
 
 /**
  * MobileMenu
  * ──────────────────────────────────────────────────────────────────
  * Full-screen slide-in menu for mobile/tablet viewports.
- * Accordion-style sub-menus. Closes on route navigation.
+ * Closes on route navigation.
  * ──────────────────────────────────────────────────────────────────
  */
 
@@ -28,11 +27,6 @@ const panelVariants = {
 };
 
 const MobileMenu = ({ isOpen, onClose }) => {
-  const [expandedId, setExpandedId] = useState(null);
-
-  const toggleExpand = (id) => {
-    setExpandedId((prev) => (prev === id ? null : id));
-  };
 
   return (
     <AnimatePresence>
@@ -89,14 +83,10 @@ const MobileMenu = ({ isOpen, onClose }) => {
             {/* Nav items */}
             <nav className="flex-1 overflow-y-auto py-4 px-2" aria-label="Mobile navigation">
               <ul className="space-y-1">
-                {NAV_ITEMS.map((item) => {
-                  const hasChildren = item.children && item.children.length > 0;
-                  const isExpanded = expandedId === item.id;
-
-                  return (
-                    <li key={item.id}>
-                      <Link
-                        to={item.path}
+                {NAV_ITEMS.map((item) => (
+                  <li key={item.id}>
+                    <Link
+                      to={item.path}
                         onClick={onClose}
                         className="
                           flex items-center
@@ -111,8 +101,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                         {item.label}
                       </Link>
                     </li>
-                  );
-                })}
+                ))}
               </ul>
             </nav>
 

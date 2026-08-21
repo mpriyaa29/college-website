@@ -297,7 +297,10 @@ const SectionPage = () => {
   const rootPath = `/${pathParts[0]}`;
 
   const currentSection = NAV_ITEMS.find((item) => item.path === rootPath);
-  const [activeSectionId, setActiveSectionId] = useState('');
+  const initialActiveId = currentSection?.children?.[0]
+    ? currentSection.children[0].label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    : '';
+  const [activeSectionId, setActiveSectionId] = useState(initialActiveId);
 
   useEffect(() => {
     if (!currentSection || !currentSection.children || currentSection.children.length === 0) return;
@@ -305,10 +308,6 @@ const SectionPage = () => {
     const sectionIds = currentSection.children.map((c) =>
       c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
     );
-
-    if (sectionIds.length > 0 && !activeSectionId) {
-      setActiveSectionId(sectionIds[0]);
-    }
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 180;

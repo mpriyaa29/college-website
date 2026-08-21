@@ -3,6 +3,8 @@ import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
+import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
+import Documents from './pages/Documents/Documents';
 import Placeholder from './pages/Placeholder/Placeholder';
 import { NAV_ITEMS } from './data/navigation';
 
@@ -24,8 +26,14 @@ const App = () => {
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
 
+        {/* ── Dedicated Online Fee Payment Portal ── */}
+        <Route path="/online-payment/*" element={<OnlinePayment />} />
+
+        {/* ── Dedicated Document Request & Tracking Service ── */}
+        <Route path="/documents/*" element={<Documents />} />
+
         {/* ── Dynamic Section Pages ── */}
-        {NAV_ITEMS.map((item) => (
+        {NAV_ITEMS.filter((item) => item.id !== 'online-payment' && item.id !== 'documents').map((item) => (
           <Route key={item.id} path={`${item.path}/*`} element={<SectionPage />} />
         ))}
 
