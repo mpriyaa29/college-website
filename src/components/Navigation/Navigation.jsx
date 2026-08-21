@@ -68,6 +68,7 @@ const Navigation = () => {
                   alt="SKCET Logo"
                   className="h-16 xl:h-[72px] w-auto object-contain filter brightness-110 drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                   loading="eager"
+                  fetchPriority="high"
                 />
               </a>
             </div>
@@ -105,6 +106,8 @@ const Navigation = () => {
                   src={LOGO_URL}
                   alt="SKCET Logo"
                   className="h-12 w-auto object-contain filter brightness-110"
+                  loading="eager"
+                  fetchPriority="high"
                 />
               </a>
               <button

@@ -896,7 +896,7 @@ const SectionPage = () => {
 
   const [activeSectionId, setActiveSectionId] = useState(getInitialActiveSection());
 
-  // Listen to hash change events to sync tabs from top-level navbar clicks
+  // Listen to hash change events to sync tabs, and reset tab when entering research page
   useEffect(() => {
     if (!currentSection || currentSection.id !== 'research') return;
 
@@ -904,8 +904,13 @@ const SectionPage = () => {
       const hash = window.location.hash.replace('#', '');
       if (['r-d', 'publications', 'patents'].includes(hash)) {
         setActiveSectionId(hash);
+      } else if (!hash) {
+        setActiveSectionId('r-d'); // Default to r-d if no hash
       }
     };
+
+    // Run once when entering the research page to ensure correct tab is selected
+    handleHashChange();
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -942,12 +947,14 @@ const SectionPage = () => {
       }
     };
 
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     const matchingChild = currentSection.children.find((c) => {
       const cid = c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const pathEnd = c.path?.split('/').pop();
-      const currentEnd = subPath.split('/').pop();
+      const currentEnd = location.pathname.split('/').pop();
       return (
-        c.path === subPath ||
+        c.path === location.pathname ||
         cid === currentEnd ||
         pathEnd === currentEnd
       );
@@ -960,6 +967,8 @@ const SectionPage = () => {
       const defaultId = currentSection.children[0].label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       setActiveSectionId(defaultId);
     }
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [currentSection, location.pathname]);
 
   if (!currentSection) {
@@ -977,9 +986,8 @@ const SectionPage = () => {
   const isAchievements = currentSection.id === 'achievements';
   const isResearchSection = currentSection.id === 'research';
 
-  // Research alternating: R&D (0)=white, Publications (1)=navy, Patents (2)=white
-  const researchTabIndex = ['r-d', 'publications', 'patents'].indexOf(activeSectionId);
-  const researchIsDark = isResearchSection && researchTabIndex % 2 === 1;
+  // Research stays fully in the blue theme for all subheadings
+  const researchIsDark = isResearchSection;
 
   const activeIndex = Math.max(
     0,
@@ -992,7 +1000,7 @@ const SectionPage = () => {
     (isAboutSection && activeIndex % 2 === 1) || researchIsDark;
 
   const isThemedSection =
-    isAboutSection || isAchievements || isResearchSection;
+    isAboutSection || isAchievements;
 
   const pageBg = isAboutSection
     ? 'bg-white'
@@ -1128,6 +1136,7 @@ const SectionPage = () => {
             )
           );
           const isAch = currentSection.id === 'achievements';
+          const isAbout = currentSection.id === 'about';
           const activeChild = currentSection.children[activeIndex];
           const anchorId = activeChild?.label.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '';
           const pathEnd = activeChild?.path?.split('/').pop();
@@ -1406,8 +1415,8 @@ const SectionPage = () => {
                               className={`
                                 block text-[15px] leading-snug transition-all duration-300
                                 ${isActive
-                                  ? `${isResearchSection ? 'font-google-sans font-bold' : 'font-display font-semibold'} text-skcet-gold`
-                                  : `${isResearchSection ? 'font-google-sans font-semibold' : 'font-medium'} ${mutedText} hover:${headingColor.split(' ')[0]}`}
+                                  ? `${isResearchSection ? 'font-sans font-bold' : 'font-display font-semibold'} text-skcet-gold`
+                                  : `${isResearchSection ? 'font-sans font-semibold' : 'font-medium'} ${mutedText} hover:${headingColor.split(' ')[0]}`}
                               `}
                             >
                               {child.label}

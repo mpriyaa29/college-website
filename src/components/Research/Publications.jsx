@@ -9,7 +9,7 @@ export default function Publications() {
         <h2 className="text-xs uppercase tracking-widest text-skcet-gold font-bold mb-2">
           Repository
         </h2>
-        <h1 className="font-google-sans text-2xl sm:text-3xl text-white font-bold tracking-tight">
+        <h1 className="font-sans text-2xl sm:text-3xl text-white font-bold tracking-tight">
           Research Publications
         </h1>
         <div className="w-12 h-0.5 bg-skcet-gold mt-4 rounded-full" />
@@ -34,7 +34,7 @@ export default function Publications() {
                 </span>
                 
                 <div className="space-y-2 min-w-0">
-                  <h3 className="font-google-sans text-lg sm:text-xl font-bold leading-snug text-white/90 group-hover:text-white transition-colors tracking-wide">
+                  <h3 className="font-sans text-lg sm:text-xl font-bold leading-snug text-white/90 group-hover:text-white transition-colors tracking-wide">
                     {pub.title}
                   </h3>
                   

@@ -5,11 +5,8 @@ import Footer from './components/Footer/Footer';
 
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
-import Home from './pages/Home/Home';
-import SectionPage from './pages/SectionPage/SectionPage';
 
 import DepartmentAchievementPage from './pages/DepartmentAchievementPage/DepartmentAchievementPage';
-
 import HighlightDetail from './pages/HighlightDetail/HighlightDetail';
 import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
 import Documents from './pages/Documents/Documents';
