@@ -21,10 +21,11 @@ export const NAV_ITEMS = [
     label: 'Achievements',
     path: '/achievements',
     children: [
+      { label: 'Recent Highlights',          path: '/achievements/recent-highlights' },
       { label: 'Institutional Achievements', path: '/achievements/institutional' },
       { label: 'Rankings',                   path: '/achievements/rankings' },
-      { label: 'Media & Press',              path: '/achievements/media-press' },
-      { label: 'Events',                     path: '/achievements/events' },
+      { label: 'Historical Milestones',      path: '/achievements/milestones' },
+      { label: 'Department Achievements',    path: '/achievements/department-achievements' },
     ],
   },
   {
@@ -100,11 +101,9 @@ export const NAV_ITEMS = [
     label: 'Research',
     path: '/research',
     children: [
-      { label: 'R&D',              path: '/research/rd' },
-      { label: 'Publications',     path: '/research/publications' },
-      { label: 'Patents',          path: '/research/patents' },
-      { label: 'Research Centres', path: '/research/centres' },
-      { label: 'Research Projects', path: '/research/projects' },
+      { label: 'R&D',              path: '/research#r-d' },
+      { label: 'Publications',     path: '/research#publications' },
+      { label: 'Patents',          path: '/research#patents' },
     ],
   },
   {

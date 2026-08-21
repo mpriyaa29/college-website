@@ -83,7 +83,8 @@ const HeroContent = () => {
             src="/images/accreditations.png" 
             alt="NAAC, NBA, NIRF, Ministry of Education Rankings" 
             className="h-10 sm:h-14 w-auto object-contain"
-            loading="lazy"
+            loading="eager"
+            fetchpriority="high"
           />
         </div>
 
@@ -101,7 +102,8 @@ const HeroContent = () => {
               group-hover:scale-[1.02] transition-transform duration-400
               bg-white
             "
-            loading="lazy"
+            loading="eager"
+            fetchpriority="high"
           />
         </a>
       </motion.div>
