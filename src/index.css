@@ -143,3 +143,31 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
+
+/* ─── Print styling for official payment receipt ───────────────── */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #skcet-official-receipt, #skcet-official-receipt * {
+    visibility: visible;
+  }
+  #skcet-official-receipt {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+}
+
