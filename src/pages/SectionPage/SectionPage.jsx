@@ -4,7 +4,30 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_ITEMS } from '../../data/navigation';
 import ABOUT_CONTENT from '../../data/aboutContent';
 import ACHIEVEMENTS_CONTENT from '../../data/achievementsContent';
-import { ArrowRight, Award, Trophy, Star, BookOpen, ExternalLink, ChevronLeft, ChevronRight, GraduationCap, Users, BarChart2, Clock, Sparkles, Building2, UserCheck, HeartHandshake, Globe } from 'lucide-react';
+
+import {
+  ArrowRight,
+  Award,
+  Trophy,
+  Star,
+  BookOpen,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+  Users,
+  BarChart2,
+  Clock,
+  Sparkles,
+  Building2,
+  UserCheck,
+  HeartHandshake,
+  Globe,
+} from 'lucide-react';
+
+import ResearchProjects from '../../components/Research/ResearchProjects';
+import Publications from '../../components/Research/Publications';
+import Patents from '../../components/Research/Patents';
 
 /* ─── Icons for Core Values ─────────────────────────────────────── */
 const VALUE_ICONS = {
@@ -856,12 +879,68 @@ const SectionPage = () => {
   const rootPath = `/${pathParts[0]}`;
 
   const currentSection = NAV_ITEMS.find((item) => item.path === rootPath);
-  const [activeSectionId, setActiveSectionId] = useState('');
+  
+  const getInitialActiveSection = () => {
+    if (!currentSection) return '';
+    if (currentSection.id === 'research') {
+      const hash = window.location.hash.replace('#', '');
+      if (['r-d', 'publications', 'patents'].includes(hash)) {
+        return hash;
+      }
+      return 'r-d';
+    }
+    return currentSection.children?.[0]
+      ? currentSection.children[0].label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+      : '';
+  };
 
+  const [activeSectionId, setActiveSectionId] = useState(getInitialActiveSection());
+
+  // Listen to hash change events to sync tabs from top-level navbar clicks
+  useEffect(() => {
+    if (!currentSection || currentSection.id !== 'research') return;
+
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (['r-d', 'publications', 'patents'].includes(hash)) {
+        setActiveSectionId(hash);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [currentSection]);
+
+  // Scroll to top when active section/tab changes in Research page
+  useEffect(() => {
+    if (currentSection?.id === 'research') {
+      window.scrollTo(0, 0);
+    }
+  }, [activeSectionId, currentSection]);
+
+  // Scroll spy (Disabled for Research page since sections are rendered dynamically)
   useEffect(() => {
     if (!currentSection || !currentSection.children || currentSection.children.length === 0) return;
+    if (currentSection.id === 'research') return;
 
-    const subPath = location.pathname;
+    const sectionIds = currentSection.children.map((c) =>
+      c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    );
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 180;
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i]);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPosition >= top) {
+            setActiveSectionId(sectionIds[i]);
+            break;
+          }
+        }
+      }
+    };
 
     const matchingChild = currentSection.children.find((c) => {
       const cid = c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -894,26 +973,71 @@ const SectionPage = () => {
     );
   }
 
-  const isAbout = currentSection.id === 'about';
+  const isAboutSection = currentSection.id === 'about';
   const isAchievements = currentSection.id === 'achievements';
-  const isThemedSection = isAbout || isAchievements;
+  const isResearchSection = currentSection.id === 'research';
 
-  const pageBg = isThemedSection ? 'bg-white' : 'bg-[#0a0f1d]';
-  const headingColor = isThemedSection ? 'text-skcet-navy' : 'text-white';
-  const mutedText = isThemedSection ? 'text-skcet-navy/50' : 'text-white/40';
-  const bodyText = isThemedSection ? 'text-black' : 'text-white/60';
-  const navIdle = isThemedSection
-    ? 'bg-skcet-navy/5 text-skcet-navy/70 hover:bg-skcet-navy/10 hover:text-skcet-navy border border-skcet-navy/10'
-    : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/5';
-  const borderMuted = isThemedSection ? 'border-skcet-navy/10' : 'border-white/10';
+  // Research alternating: R&D (0)=white, Publications (1)=navy, Patents (2)=white
+  const researchTabIndex = ['r-d', 'publications', 'patents'].indexOf(activeSectionId);
+  const researchIsDark = isResearchSection && researchTabIndex % 2 === 1;
+
+  const activeIndex = Math.max(
+    0,
+    (currentSection.children || []).findIndex(
+      (c) => c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-') === activeSectionId
+    )
+  );
+
+  const sidebarOnDark =
+    (isAboutSection && activeIndex % 2 === 1) || researchIsDark;
+
+  const isThemedSection =
+    isAboutSection || isAchievements || isResearchSection;
+
+  const pageBg = isAboutSection
+    ? 'bg-white'
+    : isAchievements
+      ? 'bg-white'
+      : isResearchSection
+        ? (researchIsDark ? 'bg-skcet-navy' : 'bg-white')
+        : 'bg-[#0a0f1d]';
+
+  const headingColor =
+    (isAboutSection || isAchievements || (isResearchSection && !researchIsDark))
+      ? 'text-skcet-navy'
+      : 'text-white';
+
+  const mutedText =
+    (isAboutSection || isAchievements || (isResearchSection && !researchIsDark))
+      ? 'text-skcet-navy/50'
+      : 'text-white/40';
+
+  const bodyText =
+    (isAboutSection || isAchievements || (isResearchSection && !researchIsDark))
+      ? 'text-black'
+      : 'text-white/60';
+
+  const navIdle =
+    (isAboutSection || isAchievements || (isResearchSection && !researchIsDark))
+      ? 'bg-skcet-navy/5 text-skcet-navy/70 hover:bg-skcet-navy/10 hover:text-skcet-navy border border-skcet-navy/10'
+      : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/5';
+
+  const borderMuted =
+    (isAboutSection || isAchievements || (isResearchSection && !researchIsDark))
+      ? 'border-skcet-navy/10'
+      : 'border-white/10';
 
   return (
-    <main className={`min-h-screen ${pageBg} ${isThemedSection ? 'pt-20' : 'pt-24'} pb-0`}>
+    <main
+      className={`min-h-screen ${pageBg} ${
+        isThemedSection ? 'pt-20' : 'pt-24'
+      } pb-0`}
+    >
 
       {/* ── Custom hero header for About & Achievements ── */}
       {isAchievements ? (
         <AchievementsHero />
-      ) : isAbout ? (
+      ) : isAboutSection ? (
         <AboutHero />
       ) : (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
@@ -923,21 +1047,47 @@ const SectionPage = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/60 mb-3">
-              <Link to="/" className="hover:text-skcet-gold transition-colors">Home</Link>
+              <Link
+                to="/"
+                className="hover:text-skcet-gold transition-colors"
+              >
+                Home
+              </Link>
               <span>/</span>
-              <span className="text-skcet-gold">{currentSection.label}</span>
+              <span className="text-skcet-gold">
+                {currentSection.label}
+              </span>
             </div>
-            <h1 className={`font-display text-4xl sm:text-5xl lg:text-6xl ${headingColor} font-semibold tracking-tight`}>
+
+            <h1
+              className={`${
+                isResearchSection
+                  ? 'font-oswald font-bold'
+                  : 'font-display font-semibold'
+              } text-4xl sm:text-5xl lg:text-6xl ${headingColor} tracking-tight`}
+            >
               {currentSection.label}
             </h1>
+
             <div className="w-16 h-1 bg-skcet-gold mt-6 rounded-full" />
           </motion.div>
         </div>
       )}
 
       {/* ── Mobile Horizontal Sticky Quick-Nav ── */}
-      {currentSection.children && currentSection.children.length > 0 && (
-        <div className={`lg:hidden sticky top-20 z-30 ${isThemedSection ? 'bg-white/95' : 'bg-[#0a0f1d]/90'} border-y ${borderMuted} px-4 py-3`}>
+      {currentSection.children &&
+        currentSection.children.length > 0 && (
+          <div
+            className={`lg:hidden sticky top-20 z-30 ${
+              isAboutSection
+                ? 'bg-white/95'
+                : isAchievements
+                  ? 'bg-white/95'
+                  : isResearchSection
+                    ? 'bg-skcet-navy/95'
+                    : 'bg-[#0a0f1d]/90'
+            } border-y ${borderMuted} px-4 py-3`}
+          >
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
             {currentSection.children.map((child, index) => {
               const anchorId = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -953,11 +1103,13 @@ const SectionPage = () => {
                   className={`
                     px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 flex-shrink-0 cursor-pointer
                     ${isActive
-                      ? 'bg-skcet-gold text-skcet-dark font-semibold shadow-md shadow-skcet-gold/20'
-                      : navIdle}
+                      ? `bg-skcet-gold text-skcet-dark ${isResearchSection ? 'font-bold' : 'font-semibold'} shadow-md shadow-skcet-gold/20`
+                      : `${navIdle} ${isResearchSection ? 'font-semibold' : ''}`}
                   `}
                 >
-                  <span className="opacity-50 mr-1.5 font-mono">{String(index + 1).padStart(2, '0')}</span>
+                  {!isResearchSection && (
+                    <span className="opacity-50 mr-1.5 font-mono">{String(index + 1).padStart(2, '0')}</span>
+                  )}
                   {child.label}
                 </button>
               );
@@ -1234,26 +1386,28 @@ const SectionPage = () => {
                           onClick={() => setActiveSectionId(anchorId)}
                           className="group relative flex items-start gap-4 py-3.5"
                         >
-                          <span className="relative z-10 flex-shrink-0 mt-0.5">
-                            <span
-                              className={`
-                                flex items-center justify-center w-8 h-8 rounded-full
-                                text-[10px] font-mono tracking-wider transition-all duration-300
-                                ${isActive
-                                  ? 'bg-skcet-gold text-skcet-dark scale-110 shadow-[0_0_0_4px_rgba(201,162,39,0.2)]'
-                                  : 'bg-[#0a0f1d] border border-white/20 text-white/40 group-hover:border-skcet-gold/50 group-hover:text-skcet-gold'}
-                              `}
-                            >
-                              {num}
+                          {!isResearchSection && (
+                            <span className="relative z-10 flex-shrink-0 mt-0.5">
+                              <span
+                                className={`
+                                  flex items-center justify-center w-8 h-8 rounded-full
+                                  text-[10px] font-mono tracking-wider transition-all duration-300
+                                  ${isActive
+                                    ? 'bg-skcet-gold text-skcet-dark scale-110 shadow-[0_0_0_4px_rgba(201,162,39,0.2)]'
+                                    : 'bg-[#0a0f1d] border border-white/20 text-white/40 group-hover:border-skcet-gold/50 group-hover:text-skcet-gold'}
+                                `}
+                              >
+                                {num}
+                              </span>
                             </span>
-                          </span>
+                          )}
                           <span className="pt-1.5 min-w-0">
                             <span
                               className={`
                                 block text-[15px] leading-snug transition-all duration-300
                                 ${isActive
-                                  ? 'font-display text-skcet-gold font-semibold'
-                                  : 'font-medium text-white/45 group-hover:text-white'}
+                                  ? `${isResearchSection ? 'font-google-sans font-bold' : 'font-display font-semibold'} text-skcet-gold`
+                                  : `${isResearchSection ? 'font-google-sans font-semibold' : 'font-medium'} ${mutedText} hover:${headingColor.split(' ')[0]}`}
                               `}
                             >
                               {child.label}
@@ -1271,7 +1425,13 @@ const SectionPage = () => {
           </aside>
 
           <div className="flex-1 min-w-0 pb-32">
-            {currentSection.children && currentSection.children.length > 0 ? (
+            {isResearchSection ? (
+              <div className="w-full">
+                {activeSectionId === 'r-d' && <ResearchProjects />}
+                {activeSectionId === 'publications' && <Publications />}
+                {activeSectionId === 'patents' && <Patents />}
+              </div>
+            ) : currentSection.children && currentSection.children.length > 0 ? (
               <div className="space-y-24">
                 {currentSection.children.map((child, index) => {
                   const anchorId = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -1285,7 +1445,7 @@ const SectionPage = () => {
                       viewport={{ once: true, margin: '-80px' }}
                       transition={{ duration: 0.5 }}
                     >
-                      <h2 className="font-display text-2xl sm:text-3xl text-white font-medium mb-6 flex items-center gap-3">
+                      <h2 className={`${isResearchSection ? 'font-oswald font-bold' : 'font-display font-medium'} text-2xl sm:text-3xl text-white mb-6 flex items-center gap-3`}>
                         <span>{child.label}</span>
                         <span className="h-px bg-white/10 flex-1 ml-4" />
                       </h2>
@@ -1294,7 +1454,7 @@ const SectionPage = () => {
                           This is the official content section for <strong>{child.label}</strong> under the {currentSection.label} department.
                         </p>
                         <p className={bodyText}>
-                          Sri Krishna College of Engineering and Technology is dedicated to providing excellence in {child.label.toLowerCase()}
+                          Sri Krishna College of Engineering and Technology is dedicated to providing excellence in {child.label.toLowerCase()}{' '}
                           by fostering innovation, rigorous academics, and comprehensive skill development.
                         </p>
                       </div>
