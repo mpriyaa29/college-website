@@ -18,8 +18,12 @@ export default {
         },
       },
       fontFamily: {
-        sans:    ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans:        ['Inter', 'system-ui', 'sans-serif'],
+        display:     ['"Playfair Display"', 'Georgia', 'serif'],
+        oswald:      ['Oswald', 'sans-serif'],
+        bebas:       ['"Bebas Neue"', 'sans-serif'],
+        anton:       ['Anton', 'sans-serif'],
+        hammersmith: ['"Hammersmith One"', 'sans-serif'],
       },
       backdropBlur: {
         xs: '2px',

@@ -3,6 +3,7 @@ import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
+import DepartmentAchievementPage from './pages/DepartmentAchievementPage/DepartmentAchievementPage';
 import Placeholder from './pages/Placeholder/Placeholder';
 import { NAV_ITEMS } from './data/navigation';
 
@@ -23,6 +24,9 @@ const App = () => {
       <Routes>
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
+
+        {/* ── Department achievement detail pages (must be before wildcard routes) ── */}
+        <Route path="/achievements/department-achievements/:deptId" element={<DepartmentAchievementPage />} />
 
         {/* ── Dynamic Section Pages ── */}
         {NAV_ITEMS.map((item) => (
