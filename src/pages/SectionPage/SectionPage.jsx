@@ -983,7 +983,7 @@ const SectionPage = () => {
   }
 
   const isAboutSection = currentSection.id === 'about';
-const isExamsSection = currentSection.id === 'exams';
+
 const isAchievements = currentSection.id === 'achievements';
 const isResearchSection = currentSection.id === 'research';
 
@@ -1432,17 +1432,14 @@ const researchIsDark = isResearchSection;
           </aside>
 
           <div className="flex-1 min-w-0 pb-32">
-      {isExamsSection ? (
-        /* Content cleared for Exams; side navigation bar remains preserved */
-        <div className="min-h-[50vh]" />
-      ) : isResearchSection ? (
+      {isResearchSection ? (
         <div className="w-full">
           {activeSectionId === 'r-d' && <ResearchProjects />}
           {activeSectionId === 'publications' && <Publications />}
           {activeSectionId === 'patents' && <Patents />}
         </div>
       ) : currentSection.children && currentSection.children.length > 0 ? (
-            ) : currentSection.children && currentSection.children.length > 0 ? (
+            
               <div className="space-y-24">
                 {currentSection.children.map((child, index) => {
                   const anchorId = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');

@@ -10,6 +10,8 @@ import DepartmentAchievementPage from './pages/DepartmentAchievementPage/Departm
 import HighlightDetail from './pages/HighlightDetail/HighlightDetail';
 import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
 import Documents from './pages/Documents/Documents';
+import Exams from './pages/Exams/Exams';
+import Admissions from './pages/Admissions/Admissions';
 
 import Placeholder from './pages/Placeholder/Placeholder';
 
