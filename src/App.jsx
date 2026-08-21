@@ -5,6 +5,10 @@ import Footer from './components/Footer/Footer';
 
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
+import Home from './pages/Home/Home';
+import SectionPage from './pages/SectionPage/SectionPage';
+
+import DepartmentAchievementPage from './pages/DepartmentAchievementPage/DepartmentAchievementPage';
 
 import HighlightDetail from './pages/HighlightDetail/HighlightDetail';
 import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
@@ -33,23 +37,29 @@ const App = () => {
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
 
-        {/* ── Highlight Details Page ── */}
-        <Route
-          path="/highlights/:id"
-          element={<HighlightDetail />}
-        />
+{/* ── Department Achievement Details Page ── */}
+<Route
+  path="/achievements/department-achievements/:deptId"
+  element={<DepartmentAchievementPage />}
+/>
 
-        {/* ── Dedicated Online Fee Payment Portal ── */}
-        <Route
-          path="/online-payment/*"
-          element={<OnlinePayment />}
-        />
+{/* ── Highlight Details Page ── */}
+<Route
+  path="/highlights/:id"
+  element={<HighlightDetail />}
+/>
 
-        {/* ── Dedicated Document Request & Tracking Service ── */}
-        <Route
-          path="/documents/*"
-          element={<Documents />}
-        />
+{/* ── Dedicated Online Fee Payment Portal ── */}
+<Route
+  path="/online-payment/*"
+  element={<OnlinePayment />}
+/>
+
+{/* ── Dedicated Document Request & Tracking Service ── */}
+<Route
+  path="/documents/*"
+  element={<Documents />}
+/>
 
         {/* ── Dynamic Section Pages ── */}
         {NAV_ITEMS

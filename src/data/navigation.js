@@ -21,10 +21,11 @@ export const NAV_ITEMS = [
     label: 'Achievements',
     path: '/achievements',
     children: [
+      { label: 'Recent Highlights',          path: '/achievements/recent-highlights' },
       { label: 'Institutional Achievements', path: '/achievements/institutional' },
       { label: 'Rankings',                   path: '/achievements/rankings' },
-      { label: 'Media & Press',              path: '/achievements/media-press' },
-      { label: 'Events',                     path: '/achievements/events' },
+      { label: 'Historical Milestones',      path: '/achievements/milestones' },
+      { label: 'Department Achievements',    path: '/achievements/department-achievements' },
     ],
   },
   {
