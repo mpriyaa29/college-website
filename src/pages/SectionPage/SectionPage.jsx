@@ -342,6 +342,7 @@ const SectionPage = () => {
   }
 
   const isAboutSection = currentSection.id === 'about';
+  const isExamsSection = currentSection.id === 'exams';
   const activeIndex = Math.max(
     0,
     (currentSection.children || []).findIndex(
@@ -360,21 +361,21 @@ const SectionPage = () => {
   const borderMuted = isAboutSection ? 'border-skcet-navy/10' : 'border-white/10';
 
   return (
-    <main className={`min-h-screen ${pageBg} pt-24 pb-0`}>
+    <main className={`min-h-screen ${pageBg} pt-36 sm:pt-40 lg:pt-44 pb-12`}>
 
       {/* ── Page Header ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/60 mb-3">
+          <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/70 mb-4">
             <Link to="/" className="hover:text-skcet-gold transition-colors">Home</Link>
             <span>/</span>
             <span className="text-skcet-gold">{currentSection.label}</span>
           </div>
-          <h1 className={`font-display text-4xl sm:text-5xl lg:text-6xl ${headingColor} font-semibold tracking-tight`}>
+          <h1 className={`font-display text-4xl sm:text-5xl lg:text-6xl ${headingColor} font-semibold tracking-tight leading-tight`}>
             {currentSection.label}
           </h1>
           <div className="w-16 h-1 bg-skcet-gold mt-6 rounded-full" />
@@ -383,7 +384,7 @@ const SectionPage = () => {
 
       {/* ── Mobile Horizontal Sticky Quick-Nav ── */}
       {currentSection.children && currentSection.children.length > 0 && (
-        <div className={`lg:hidden sticky top-20 z-30 ${isAboutSection ? 'bg-white/95' : 'bg-[#0a0f1d]/90'} border-y ${borderMuted} px-4 py-3`}>
+        <div className={`lg:hidden sticky top-24 z-30 ${isAboutSection ? 'bg-white/95' : 'bg-[#0a0f1d]/90'} border-y ${borderMuted} px-4 py-3`}>
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
             {currentSection.children.map((child, index) => {
               const anchorId = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -413,7 +414,7 @@ const SectionPage = () => {
         <div className="relative">
           {/* Sticky sidebar overlays the bands */}
           <aside className="hidden lg:block absolute left-0 top-0 bottom-0 z-20 pointer-events-none">
-            <div className="sticky top-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-none">
+            <div className="sticky top-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-none">
               <nav
                 aria-label="Section topics"
                 className={`w-56 pointer-events-auto transition-colors duration-300 ${
@@ -537,7 +538,7 @@ const SectionPage = () => {
       ) : (
         /* ── Other sections: original layout ── */
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start gap-12 lg:gap-16 relative pb-24">
-          <aside className="hidden lg:block lg:w-56 flex-shrink-0 sticky top-28 self-start z-20">
+          <aside className="hidden lg:block lg:w-56 flex-shrink-0 sticky top-36 self-start z-20">
             {currentSection.children && currentSection.children.length > 0 ? (
               <nav aria-label="Section topics">
                 <ul className="relative flex flex-col">
@@ -590,7 +591,10 @@ const SectionPage = () => {
           </aside>
 
           <div className="flex-1 min-w-0 pb-32">
-            {currentSection.children && currentSection.children.length > 0 ? (
+            {isExamsSection ? (
+              /* Content cleared for Exams; side navigation bar remains preserved */
+              <div className="min-h-[50vh]" />
+            ) : currentSection.children && currentSection.children.length > 0 ? (
               <div className="space-y-24">
                 {currentSection.children.map((child, index) => {
                   const anchorId = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');

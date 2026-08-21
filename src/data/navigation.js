@@ -63,10 +63,10 @@ export const NAV_ITEMS = [
     label: 'Admissions',
     path: '/admissions',
     children: [
-      { label: 'Admission 2026',      path: '/admissions/2026' },
-      { label: 'Admission Procedure', path: '/admissions/procedure' },
-      { label: 'Scholarships',        path: '/admissions/scholarships' },
-      { label: 'Fees',                path: '/admissions/fees' },
+      { label: 'Admission 2026',        path: '/admissions/2026' },
+      { label: 'Admission Procedure',   path: '/admissions/procedure' },
+      { label: 'Scholarships',          path: '/admissions/scholarships' },
+      { label: 'Cut-off & Calculator',  path: '/admissions/cutoff' },
     ],
   },
   {

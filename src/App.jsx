@@ -5,6 +5,8 @@ import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
 import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
 import Documents from './pages/Documents/Documents';
+import Exams from './pages/Exams/Exams';
+import Admissions from './pages/Admissions/Admissions';
 import Placeholder from './pages/Placeholder/Placeholder';
 import { NAV_ITEMS } from './data/navigation';
 
@@ -32,8 +34,14 @@ const App = () => {
         {/* ── Dedicated Document Request & Tracking Service ── */}
         <Route path="/documents/*" element={<Documents />} />
 
+        {/* ── Dedicated Autonomous Examination Portal ── */}
+        <Route path="/exams/*" element={<Exams />} />
+
+        {/* ── Dedicated Admissions Portal ── */}
+        <Route path="/admissions/*" element={<Admissions />} />
+
         {/* ── Dynamic Section Pages ── */}
-        {NAV_ITEMS.filter((item) => item.id !== 'online-payment' && item.id !== 'documents').map((item) => (
+        {NAV_ITEMS.filter((item) => item.id !== 'online-payment' && item.id !== 'documents' && item.id !== 'exams' && item.id !== 'admissions').map((item) => (
           <Route key={item.id} path={`${item.path}/*`} element={<SectionPage />} />
         ))}
 
