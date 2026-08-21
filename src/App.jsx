@@ -3,6 +3,7 @@ import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
+import HighlightDetail from './pages/HighlightDetail/HighlightDetail';
 import Placeholder from './pages/Placeholder/Placeholder';
 import { NAV_ITEMS } from './data/navigation';
 
@@ -23,6 +24,9 @@ const App = () => {
       <Routes>
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
+
+        {/* ── Highlight Details Page ── */}
+        <Route path="/highlights/:id" element={<HighlightDetail />} />
 
         {/* ── Dynamic Section Pages ── */}
         {NAV_ITEMS.map((item) => (
