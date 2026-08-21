@@ -20,6 +20,8 @@ export default {
       fontFamily: {
         sans:    ['Inter', 'system-ui', 'sans-serif'],
         display: ['"Playfair Display"', 'Georgia', 'serif'],
+        'google-sans': ['"Google Sans"', '"Google Sans Display"', 'system-ui', 'sans-serif'],
+        oswald: ['Oswald', 'sans-serif'],
       },
       backdropBlur: {
         xs: '2px',
