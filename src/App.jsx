@@ -17,7 +17,7 @@ import Placeholder from './pages/Placeholder/Placeholder';
 import Accreditations from './pages/Accreditations/Accreditations';
 import Placements from './pages/Placements/Placements';
 import { NAV_ITEMS } from './data/navigation';
-import { NAV_ITEMS } from './data/navigation';
+
 
 /**
  * App
