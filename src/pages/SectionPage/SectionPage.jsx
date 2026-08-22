@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_ITEMS } from '../../data/navigation';
 import ABOUT_CONTENT from '../../data/aboutContent';
 import ACHIEVEMENTS_CONTENT from '../../data/achievementsContent';
-import { ArrowRight, Award, Trophy, Star, BookOpen, ExternalLink, ChevronLeft, ChevronRight, GraduationCap, Users, BarChart2, Clock, Sparkles, Building2, UserCheck, HeartHandshake, Globe } from 'lucide-react';
+import INNOVATIONS_CONTENT from '../../data/innovationsContent';
+import { ArrowRight, Award, Trophy, Star, BookOpen, ExternalLink, ChevronLeft, ChevronRight, GraduationCap, Users, BarChart2, Clock, Sparkles, Building2, UserCheck, HeartHandshake, Globe, Cpu, TrendingUp, Rocket, Wrench, Lightbulb, Zap, Printer, Wifi, Eye } from 'lucide-react';
 
 /* ─── Icons for Core Values ─────────────────────────────────────── */
 const VALUE_ICONS = {
@@ -134,43 +135,61 @@ const InstitutionContent = ({ data }) => {
         </div>
       </div>
 
-      {/* ── Dark Navy Bottom Stats Strip ── */}
-      <div className="bg-skcet-dark text-white rounded-2xl p-6 shadow-xl border border-white/10">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 divide-y md:divide-y-0 md:divide-x divide-white/10">
-          <div className="flex items-center gap-3 pt-2 md:pt-0">
-            <Trophy size={24} className="text-skcet-gold flex-shrink-0" />
-            <div>
-              <div className="font-display text-2xl font-bold text-white">28+</div>
-              <div className="text-[11px] text-white/60 font-light leading-tight">Years of Excellence</div>
-            </div>
+      {/* ── Dark Navy Institutional Impact Matrix (Matching Image 1) ── */}
+      <div className="bg-gradient-to-br from-[#0c1836] via-[#09132c] to-[#040916] text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 relative overflow-hidden">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+          <div>
+            <h3 className="font-display text-xl font-bold text-white flex items-center gap-2">
+              <Trophy className="text-skcet-gold" size={22} />
+              SKCET Legacy & Institutional Impact Matrix
+            </h3>
+            <p className="text-xs text-white/50 font-light mt-0.5">Key benchmark statistics & achievements at a glance</p>
           </div>
-          <div className="flex items-center gap-3 pt-2 md:pt-0 md:pl-4">
-            <Users size={24} className="text-skcet-gold flex-shrink-0" />
-            <div>
-              <div className="font-display text-2xl font-bold text-white">10000+</div>
-              <div className="text-[11px] text-white/60 font-light leading-tight">Students Empowered</div>
-            </div>
+          <span className="hidden sm:inline-block px-3 py-1 text-xs font-mono font-bold rounded-full bg-skcet-gold text-skcet-dark">
+            Recognized Globally
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">28+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Years of Academic Excellence</div>
           </div>
-          <div className="flex items-center gap-3 pt-2 md:pt-0 md:pl-4">
-            <UserCheck size={24} className="text-skcet-gold flex-shrink-0" />
-            <div>
-              <div className="font-display text-2xl font-bold text-white">500+</div>
-              <div className="text-[11px] text-white/60 font-light leading-tight">Experienced Faculty</div>
-            </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">500+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Faculty with PhD & Research Scholars</div>
           </div>
-          <div className="flex items-center gap-3 pt-2 md:pt-0 md:pl-4">
-            <Building2 size={24} className="text-skcet-gold flex-shrink-0" />
-            <div>
-              <div className="font-display text-2xl font-bold text-white">50+</div>
-              <div className="text-[11px] text-white/60 font-light leading-tight">Programs Offered</div>
-            </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">100+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Advanced High-Tech Laboratories</div>
           </div>
-          <div className="flex items-center gap-3 pt-2 md:pt-0 md:pl-4">
-            <Globe size={24} className="text-skcet-gold flex-shrink-0" />
-            <div>
-              <div className="font-display text-2xl font-bold text-white">20+</div>
-              <div className="text-[11px] text-white/60 font-light leading-tight">Global Partnerships</div>
-            </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">50+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">UG, PG & Doctoral Programmes</div>
+          </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">1300+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Annual Scholarship Awards</div>
+          </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">25,000+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Alumni Network Across the Globe</div>
+          </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">71+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">MoUs with Global Universities & Cos</div>
+          </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">14+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Government & Industry CoEs</div>
+          </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">282+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Top Placement Recruiters</div>
+          </div>
+          <div className="bg-white/[0.04] p-4 rounded-xl border border-white/8 hover:border-skcet-gold/40 transition-colors">
+            <div className="font-display text-3xl font-bold text-skcet-gold">350+</div>
+            <div className="text-xs font-semibold text-white/90 mt-1">Patents Published & Granted</div>
           </div>
         </div>
       </div>
@@ -761,6 +780,493 @@ const ABOUT_ICONS = {
   'csr':          <HeartHandshake size={18} />,
 };
 
+/* ─── Innovations: Innovation Initiatives ─── */
+const InnovationInitiativesContent = ({ data, isDark = false }) => {
+  const t = themeClasses(isDark);
+  return (
+    <div className="space-y-10">
+      {data.intro && (
+        <p className={`${t.body} font-light leading-relaxed text-base sm:text-lg max-w-4xl`}>
+          {data.intro}
+        </p>
+      )}
+
+      {/* Stats row */}
+      {data.stats && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-skcet-dark text-white rounded-2xl p-6 shadow-xl border border-white/10">
+          {data.stats.map((stat, idx) => (
+            <div key={idx} className="p-3 text-center border-r last:border-r-0 border-white/10">
+              <div className="font-display text-2xl font-bold text-skcet-gold">{stat.value}</div>
+              <div className="text-xs font-semibold text-white mt-1">{stat.label}</div>
+              <div className="text-[11px] text-white/50 font-light mt-0.5">{stat.sub}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Narrative Paragraphs */}
+      {data.overviewParagraphs && (
+        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-skcet-navy/10 space-y-4">
+          <h3 className="font-display text-xl font-bold text-skcet-navy flex items-center gap-2">
+            <Sparkles className="text-skcet-gold" size={20} />
+            Ecosystem Overview & Achievements
+          </h3>
+          {data.overviewParagraphs.map((para, idx) => (
+            <p key={idx} className="text-skcet-navy/75 font-light leading-relaxed text-sm sm:text-base">
+              {para}
+            </p>
+          ))}
+        </div>
+      )}
+
+      {/* IIC Rating Certificates Grid */}
+      {data.certificates && (
+        <div>
+          <h3 className="font-display text-xl font-bold text-skcet-navy mb-4 flex items-center gap-2">
+            <Award className="text-skcet-gold" size={22} />
+            Official IIC Rating Certificates
+          </h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {data.certificates.map((cert, idx) => (
+              <a
+                key={idx}
+                href={cert.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 p-4 rounded-xl border border-skcet-navy/10 bg-white hover:border-skcet-gold/50 hover:shadow-md transition-all duration-200 group"
+              >
+                <div className="w-12 h-12 rounded-lg bg-amber-50 text-skcet-gold flex items-center justify-center flex-shrink-0 group-hover:bg-skcet-gold group-hover:text-white transition-colors">
+                  <BookOpen size={22} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[11px] font-mono font-bold text-skcet-gold block">{cert.year}</span>
+                  <span className="text-xs font-semibold text-skcet-navy group-hover:text-skcet-gold transition-colors block truncate">
+                    {cert.title}
+                  </span>
+                </div>
+                <ExternalLink size={14} className="text-skcet-navy/30 group-hover:text-skcet-gold flex-shrink-0" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming Events Table */}
+      {data.upcomingEvents && (
+        <div className="bg-white rounded-2xl border border-skcet-navy/10 p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-skcet-navy/8 pb-4">
+            <div>
+              <h3 className="font-display text-xl font-bold text-skcet-navy">IIC Upcoming Events Schedule</h3>
+              <p className="text-xs text-skcet-navy/55 font-light">Planned initiatives for Quarter 3 & 4</p>
+            </div>
+            <span className="px-3 py-1 text-xs font-mono font-semibold rounded bg-skcet-gold/10 text-skcet-gold border border-skcet-gold/30 self-start sm:self-auto">
+              15 Quarter Events
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-skcet-navy/10 bg-skcet-navy/[0.02]">
+                  <th className="py-3 px-4 font-mono text-skcet-gold font-bold uppercase w-16">S.No</th>
+                  <th className="py-3 px-4 font-mono text-skcet-navy font-bold uppercase">Name of the Event</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-skcet-navy/5">
+                {data.upcomingEvents.map((event) => (
+                  <tr key={event.sno} className="hover:bg-skcet-navy/[0.015] transition-colors">
+                    <td className="py-3 px-4 font-mono font-semibold text-skcet-gold align-top">{event.sno}</td>
+                    <td className="py-3 px-4 text-skcet-navy/80 font-light leading-relaxed align-top">{event.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─── Innovations: AICTE IDEA Lab ─── */
+const IdeaLabContent = ({ data, isDark = false }) => {
+  const t = themeClasses(isDark);
+  return (
+    <div className="space-y-10">
+      {/* Banner & Logo */}
+      <div className="bg-gradient-to-r from-skcet-navy via-[#0d1b3e] to-skcet-dark text-white rounded-3xl p-6 sm:p-8 border border-white/10 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex-1">
+          <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-skcet-gold text-skcet-dark mb-4">
+            AICTE Sanctioned Nodal Lab
+          </span>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+            AICTE–IDEA Lab at SKCET
+          </h2>
+          <p className="text-skcet-gold/90 text-sm sm:text-base font-light max-w-2xl">
+            {data.intro}
+          </p>
+        </div>
+
+        {data.image && (
+          <div className="w-48 h-32 flex-shrink-0 bg-white/10 rounded-2xl p-3 backdrop-blur-sm border border-white/15 flex items-center justify-center">
+            <img src={data.image} alt="AICTE Idea Lab Logo" className="max-h-full max-w-full object-contain" />
+          </div>
+        )}
+      </div>
+
+      {/* Vision & Mission */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-amber-50/70 rounded-2xl p-6 border border-skcet-gold/30 space-y-2">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-skcet-gold">Core Focus</span>
+          <h3 className="font-display text-xl font-bold text-skcet-navy">Vision</h3>
+          <p className="text-sm text-skcet-navy/80 font-light leading-relaxed">{data.vision}</p>
+        </div>
+
+        <div className="bg-amber-50/70 rounded-2xl p-6 border border-skcet-gold/30 space-y-2">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider text-skcet-gold">Strategic Path</span>
+          <h3 className="font-display text-xl font-bold text-skcet-navy">Mission</h3>
+          <ul className="space-y-2">
+            {data.mission.map((m, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-skcet-navy/80 font-light">
+                <span className="text-skcet-gold mt-0.5 flex-shrink-0">◆</span>
+                <span>{m}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Objectives */}
+      <div>
+        <h3 className="font-display text-xl font-bold text-skcet-navy mb-6 flex items-center gap-2">
+          <Award className="text-skcet-gold" size={22} />
+          Key Objectives
+        </h3>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {data.objectives.map((obj, idx) => (
+            <div key={idx} className="bg-white rounded-xl p-5 border border-skcet-navy/10 hover:border-skcet-gold/40 hover:shadow-md transition-all flex items-start gap-3">
+              <span className="w-8 h-8 rounded-lg bg-skcet-gold/10 text-skcet-gold font-mono font-bold text-xs flex items-center justify-center flex-shrink-0">
+                0{idx + 1}
+              </span>
+              <p className="text-xs sm:text-sm text-skcet-navy/80 font-light leading-relaxed">{obj}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Accordion Sections (Infrastructure, Engagement, Ecosystem) */}
+      <div className="space-y-6">
+        <h3 className="font-display text-xl font-bold text-skcet-navy flex items-center gap-2">
+          <Cpu className="text-skcet-gold" size={22} />
+          Facilities & Multidisciplinary Ecosystem
+        </h3>
+
+        {data.sections.map((sec) => (
+          <div key={sec.id} className="bg-white rounded-2xl p-6 border border-skcet-navy/10 space-y-4">
+            <h4 className="font-display text-lg font-bold text-skcet-navy">{sec.title}</h4>
+            <p className="text-sm text-skcet-navy/70 font-light leading-relaxed">{sec.content}</p>
+
+            {sec.equipmentList && (
+              <div className="border-t border-skcet-navy/8 pt-4">
+                <span className="text-xs font-mono font-semibold text-skcet-gold uppercase tracking-wider block mb-2">
+                  Prototyping Equipment Installed:
+                </span>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {sec.equipmentList.map((eq, eIdx) => (
+                    <div key={eIdx} className="flex items-center gap-2 text-xs text-skcet-navy/80 font-mono bg-skcet-navy/[0.02] p-2 rounded border border-skcet-navy/5">
+                      <Wrench size={14} className="text-skcet-gold flex-shrink-0" />
+                      <span>{eq}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* SKCET AICTE IDEA Lab Team */}
+      {data.team && (
+        <div>
+          <h3 className="font-display text-xl font-bold text-skcet-navy mb-6 flex items-center gap-2">
+            <Users className="text-skcet-gold" size={22} />
+            SKCET AICTE IDEA Lab Leadership Team
+          </h3>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data.team.map((member, idx) => (
+              <div key={idx} className="bg-white rounded-xl p-5 border border-skcet-navy/10 hover:border-skcet-gold/40 hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                  <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded bg-skcet-gold/10 text-skcet-gold border border-skcet-gold/30 inline-block mb-2">
+                    {member.role}
+                  </span>
+                  <h4 className="font-display text-base font-bold text-skcet-navy">{member.name}</h4>
+                  <p className="text-xs text-skcet-navy/60 font-light mt-0.5">{member.designation}</p>
+                </div>
+                <a
+                  href={`mailto:${member.email}`}
+                  className="mt-4 pt-3 border-t border-skcet-navy/5 text-xs font-mono text-skcet-gold hover:underline truncate block"
+                >
+                  {member.email}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Activities Photo Showcase */}
+      {data.activities && (
+        <div className="bg-white rounded-2xl p-6 border border-skcet-navy/10 space-y-4">
+          <h3 className="font-display text-xl font-bold text-skcet-navy">{data.activities.title}</h3>
+          <p className="text-sm text-skcet-navy/70 font-light leading-relaxed">{data.activities.description}</p>
+          {data.activities.image && (
+            <div className="rounded-xl overflow-hidden border border-skcet-navy/10 max-w-2xl mx-auto shadow-md">
+              <img src={data.activities.image} alt="Idea Lab Activities" className="w-full h-auto object-cover" />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─── Innovations: Entrepreneurship (EDC) ─── */
+const EntrepreneurshipContent = ({ data, isDark = false }) => {
+  const t = themeClasses(isDark);
+  return (
+    <div className="space-y-10">
+      {data.intro && (
+        <p className={`${t.body} font-light leading-relaxed text-base sm:text-lg max-w-4xl`}>
+          {data.intro}
+        </p>
+      )}
+
+      {/* Pillars */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {data.pillars.map((p, idx) => (
+          <div key={idx} className="bg-white rounded-2xl p-5 border border-skcet-navy/10 hover:border-skcet-gold/40 hover:shadow-md transition-all">
+            <div className="w-10 h-10 rounded-lg bg-skcet-gold/10 text-skcet-gold flex items-center justify-center font-bold font-mono text-sm mb-3">
+              0{idx + 1}
+            </div>
+            <h4 className="font-display text-base font-bold text-skcet-navy mb-2">{p.title}</h4>
+            <p className="text-xs text-skcet-navy/60 font-light leading-relaxed">{p.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Startups Showcase */}
+      <div>
+        <h3 className="font-display text-xl font-bold text-skcet-navy mb-6 flex items-center gap-2">
+          <TrendingUp className="text-skcet-gold" size={22} />
+          Featured Incubated & Alumni Ventures
+        </h3>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {data.startups.map((st, idx) => (
+            <div key={idx} className="bg-white rounded-2xl p-6 border border-skcet-navy/10 hover:border-skcet-gold/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+              <div>
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div>
+                    <h4 className="font-display text-xl font-bold text-skcet-navy">{st.name}</h4>
+                    <span className="text-xs font-mono text-skcet-gold font-medium">{st.domain}</span>
+                  </div>
+                  <span className="px-2.5 py-1 text-[11px] font-mono font-semibold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {st.status}
+                  </span>
+                </div>
+
+                <p className="text-xs text-skcet-navy/70 font-light leading-relaxed mb-4">{st.description}</p>
+              </div>
+
+              <div className="border-t border-skcet-navy/8 pt-3 flex items-center justify-between text-xs">
+                <span className="text-skcet-navy/60 font-light">Founder: <strong className="text-skcet-navy font-normal">{st.founder}</strong></span>
+                <span className="px-2 py-0.5 rounded bg-skcet-gold/10 text-skcet-gold font-mono font-bold">{st.funding}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Roadmap */}
+      {data.roadmap && (
+        <div className="bg-skcet-dark text-white rounded-2xl p-6 sm:p-8 border border-white/10 shadow-xl">
+          <h3 className="font-display text-xl font-bold text-white mb-6 text-center">
+            Innovation to Enterprise Roadmap
+          </h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {data.roadmap.map((step, idx) => (
+              <div key={idx} className="relative">
+                <span className="text-3xl font-mono font-bold text-skcet-gold block mb-2">{step.step}</span>
+                <h4 className="font-display text-base font-bold text-white mb-1">{step.title}</h4>
+                <p className="text-xs text-white/60 font-light leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─── Innovations: Innovation Projects & Patents ─── */
+const InnovationProjectsContent = ({ data, isDark = false }) => {
+  const t = themeClasses(isDark);
+  return (
+    <div className="space-y-10">
+      {data.intro && (
+        <p className={`${t.body} font-light leading-relaxed text-base sm:text-lg max-w-4xl`}>
+          {data.intro}
+        </p>
+      )}
+
+      {/* Patents Section */}
+      <div>
+        <h3 className="font-display text-xl font-bold text-skcet-navy mb-6 flex items-center gap-2">
+          <Award className="text-skcet-gold" size={22} />
+          Featured Granted & Published Patents
+        </h3>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {data.patents.map((pat, idx) => (
+            <div key={idx} className="bg-white rounded-2xl p-6 border border-skcet-navy/10 hover:border-skcet-gold/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="px-2.5 py-0.5 text-[11px] font-mono font-bold rounded bg-skcet-gold/10 text-skcet-gold border border-skcet-gold/30">
+                    {pat.patentNo}
+                  </span>
+                  <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded bg-amber-50 text-amber-800 border border-amber-200">
+                    {pat.status}
+                  </span>
+                </div>
+
+                <h4 className="font-display text-base sm:text-lg font-bold text-skcet-navy mb-2 leading-snug">
+                  {pat.title}
+                </h4>
+
+                <p className="text-xs text-skcet-navy/65 font-light leading-relaxed mb-4">
+                  {pat.summary}
+                </p>
+              </div>
+
+              <div className="border-t border-skcet-navy/5 pt-3 space-y-1 text-xs text-skcet-navy/70">
+                <div>Domain: <span className="font-semibold text-skcet-navy">{pat.domain}</span></div>
+                <div>Inventors: <span className="italic font-light">{pat.inventors}</span></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Student Projects */}
+      <div>
+        <h3 className="font-display text-xl font-bold text-skcet-navy mb-6 flex items-center gap-2">
+          <Rocket className="text-skcet-gold" size={22} />
+          Award-Winning Student Interdisciplinary Projects
+        </h3>
+
+        <div className="space-y-4">
+          {data.studentProjects.map((proj, idx) => (
+            <div key={idx} className="bg-white rounded-2xl p-6 border border-skcet-navy/10 hover:border-skcet-gold/40 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1 flex-1">
+                <div className="flex items-center gap-3">
+                  <span className="text-skcet-gold">✦</span>
+                  <h4 className="font-display text-lg font-bold text-skcet-navy">{proj.title}</h4>
+                </div>
+                <p className="text-xs text-skcet-navy/65 font-light leading-relaxed pl-6">{proj.description}</p>
+                <div className="text-xs text-skcet-navy/50 font-light pl-6">Team: <span className="font-medium text-skcet-navy/80">{proj.team}</span></div>
+              </div>
+
+              <span className="px-3 py-1.5 text-xs font-mono font-semibold rounded-lg bg-skcet-gold/15 text-skcet-gold border border-skcet-gold/30 self-start sm:self-auto flex-shrink-0">
+                {proj.achievement}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Innovations Renderer ─── */
+const renderInnovationsContent = (anchorId, data, isDark = false) => {
+  if (!data) return null;
+
+  switch (anchorId) {
+    case 'innovation-initiatives':
+    case 'initiatives':
+      return <InnovationInitiativesContent data={data} isDark={isDark} />;
+    case 'idea-lab':
+      return <IdeaLabContent data={data} isDark={isDark} />;
+    case 'entrepreneurship':
+      return <EntrepreneurshipContent data={data} isDark={isDark} />;
+    case 'innovation-projects':
+    case 'projects':
+      return <InnovationProjectsContent data={data} isDark={isDark} />;
+    default:
+      return <GenericContent data={data} isDark={isDark} />;
+  }
+};
+
+/* ─── Icon map for Innovations sidebar ─── */
+const INNOVATIONS_ICONS = {
+  'innovation-initiatives': <Sparkles size={18} />,
+  'initiatives':            <Sparkles size={18} />,
+  'idea-lab':               <Cpu size={18} />,
+  'entrepreneurship':       <TrendingUp size={18} />,
+  'innovation-projects':    <Rocket size={18} />,
+  'projects':               <Rocket size={18} />,
+};
+
+const InnovationsHero = () => (
+  <div className="relative bg-white border-b border-skcet-navy/8 overflow-hidden">
+    {/* Right: AICTE gear logo emblem (keeping 1st image alone) */}
+    <div className="hidden lg:flex absolute inset-y-0 right-0 w-[42%] h-full items-center justify-center pr-12 pointer-events-none">
+      <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-3xl overflow-hidden border border-skcet-navy/10 bg-white p-3 shadow-xl">
+        <div className="w-full h-full rounded-2xl overflow-hidden relative">
+          <img
+            src="https://skcet.ac.in/wp-content/uploads/2026/01/AICTE-Idea-Lab.png"
+            onError={(e) => {
+              e.currentTarget.src = "/images/about-institution.png";
+            }}
+            alt="AICTE Emblem"
+            className="w-[200%] h-full max-w-none object-cover object-left"
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* Content */}
+    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col lg:flex-row items-stretch min-h-[240px] lg:min-h-[280px]">
+        <div className="flex-1 flex flex-col justify-center py-10 lg:py-12 pr-0 lg:pr-12 max-w-xl">
+          <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/70 mb-3">
+            <Link to="/" className="hover:text-skcet-gold transition-colors">Home</Link>
+            <span className="opacity-50">/</span>
+            <span className="text-skcet-gold font-semibold">Innovations</span>
+          </div>
+
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-skcet-navy font-bold tracking-tight leading-none mb-3">
+            Innovations
+          </h1>
+
+          <p className="text-skcet-gold font-medium text-sm sm:text-base mb-3 flex items-center gap-2 flex-wrap">
+            <span>Ideate</span>
+            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
+            <span>Incubate</span>
+            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
+            <span>Impact</span>
+          </p>
+          <p className="text-skcet-navy/60 font-light leading-relaxed text-sm sm:text-base border-l-2 border-skcet-gold/40 pl-4 py-0.5">
+            Empowering creative minds through AICTE IDEA Lab prototyping, 5-Star MoE IIC innovation council, patent creation, and startup incubation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const AboutHero = () => (
   <div className="bg-white border-b border-skcet-navy/8">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
@@ -774,7 +1280,14 @@ const AboutHero = () => (
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-skcet-navy font-bold tracking-tight leading-none mb-3">
             About
           </h1>
-          <div className="w-16 h-1 bg-skcet-gold rounded-full" />
+          <div className="w-16 h-1 bg-skcet-gold rounded-full mb-3" />
+          <p className="text-skcet-gold font-medium text-xs sm:text-sm flex items-center gap-2 flex-wrap">
+            <span>28+ Years of Excellence</span>
+            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
+            <span>NAAC A++ Grade</span>
+            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
+            <span>NIRF Rank 100</span>
+          </p>
         </div>
         <p className="text-skcet-navy/55 text-sm max-w-md italic font-light border-l-2 border-skcet-gold/40 pl-4 py-1">
           “ At SKCET, we don't just educate — we inspire innovation, nurture talent and build leaders for a better tomorrow. ”
@@ -896,7 +1409,8 @@ const SectionPage = () => {
 
   const isAbout = currentSection.id === 'about';
   const isAchievements = currentSection.id === 'achievements';
-  const isThemedSection = isAbout || isAchievements;
+  const isInnovations = currentSection.id === 'innovations';
+  const isThemedSection = isAbout || isAchievements || isInnovations;
 
   const pageBg = isThemedSection ? 'bg-white' : 'bg-[#0a0f1d]';
   const headingColor = isThemedSection ? 'text-skcet-navy' : 'text-white';
@@ -910,11 +1424,13 @@ const SectionPage = () => {
   return (
     <main className={`min-h-screen ${pageBg} ${isThemedSection ? 'pt-20' : 'pt-24'} pb-0`}>
 
-      {/* ── Custom hero header for About & Achievements ── */}
+      {/* ── Custom hero header for About, Achievements & Innovations ── */}
       {isAchievements ? (
         <AchievementsHero />
       ) : isAbout ? (
         <AboutHero />
+      ) : isInnovations ? (
+        <InnovationsHero />
       ) : (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
           <motion.div
@@ -976,20 +1492,23 @@ const SectionPage = () => {
             )
           );
           const isAch = currentSection.id === 'achievements';
+          const isInno = currentSection.id === 'innovations';
           const activeChild = currentSection.children[activeIndex];
           const anchorId = activeChild?.label.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '';
           const pathEnd = activeChild?.path?.split('/').pop();
-          const isDark = (isAch || isAbout) ? false : activeIndex % 2 === 1;
+          const isDark = (isAch || isAbout || isInno) ? false : activeIndex % 2 === 1;
           const t = themeClasses(isDark);
           const contentData = currentSection.id === 'about'
             ? ABOUT_CONTENT[anchorId]
             : currentSection.id === 'achievements'
             ? (ACHIEVEMENTS_CONTENT[anchorId] || ACHIEVEMENTS_CONTENT[pathEnd])
+            : currentSection.id === 'innovations'
+            ? (INNOVATIONS_CONTENT[anchorId] || INNOVATIONS_CONTENT[pathEnd])
             : null;
 
           return (
             <div className={`min-h-[calc(100vh-64px)] ${
-              (isAch || isAbout) ? 'bg-white' : isDark ? 'bg-skcet-dark' : 'bg-white'
+              (isAch || isAbout || isInno) ? 'bg-white' : isDark ? 'bg-skcet-dark' : 'bg-white'
             } transition-colors duration-300`}>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex gap-0 lg:gap-8">
@@ -1011,7 +1530,7 @@ const SectionPage = () => {
                             const cid = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                             const isActive = activeSectionId === cid;
                             const num = String(index + 1).padStart(2, '0');
-                            const icon = isAch ? ACHIEVEMENTS_ICONS[cid] : ABOUT_ICONS[cid];
+                            const icon = isAch ? ACHIEVEMENTS_ICONS[cid] : isInno ? INNOVATIONS_ICONS[cid] : ABOUT_ICONS[cid];
                             return (
                               <li key={index} className="relative z-10">
                                 {isThemedSection ? (
@@ -1132,6 +1651,18 @@ const SectionPage = () => {
                               <span className="h-px w-12 bg-skcet-gold/40" />
                             </div>
                           </div>
+                        ) : isInno ? (
+                          /* Innovations: centered decorative section title */
+                          <div className="text-center mb-10">
+                            <h2 className="font-display text-3xl sm:text-4xl font-bold text-skcet-navy">
+                              {activeChild?.label}
+                            </h2>
+                            <div className="flex items-center justify-center gap-3 mt-3">
+                              <span className="h-px w-12 bg-skcet-gold/40" />
+                              <span className="text-skcet-gold text-lg">✦</span>
+                              <span className="h-px w-12 bg-skcet-gold/40" />
+                            </div>
+                          </div>
                         ) : (
                           <h2 className={`font-display text-2xl sm:text-3xl ${t.heading} font-medium mb-8 flex items-center gap-3`}>
                             <span>{activeChild?.label}</span>
@@ -1142,6 +1673,8 @@ const SectionPage = () => {
                         {contentData ? (
                           currentSection.id === 'achievements'
                             ? renderAchievementsContent(anchorId, contentData, isDark)
+                            : currentSection.id === 'innovations'
+                            ? renderInnovationsContent(anchorId, contentData, isDark)
                             : renderAboutContent(anchorId, contentData, isDark)
                         ) : (
                           <div className={`prose max-w-none ${isDark ? 'prose-invert' : ''} prose-p:font-light prose-p:leading-relaxed`}>
@@ -1170,7 +1703,9 @@ const SectionPage = () => {
                             onClick={() => {
                               const prev = currentSection.children[activeIndex - 1];
                               if (prev) {
-                                setActiveSectionId(prev.label.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+                                if (prev.path) navigate(prev.path);
+                                const cid = prev.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                setActiveSectionId(cid);
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                               }
                             }}
@@ -1190,7 +1725,9 @@ const SectionPage = () => {
                             onClick={() => {
                               const next = currentSection.children[activeIndex + 1];
                               if (next) {
-                                setActiveSectionId(next.label.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+                                if (next.path) navigate(next.path);
+                                const cid = next.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                setActiveSectionId(cid);
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
                               }
                             }}
