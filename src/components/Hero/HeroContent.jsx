@@ -29,27 +29,24 @@ const fadeUp = {
 const HeroContent = () => {
   return (
     <motion.div
-      className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-8 lg:px-14 xl:px-20"
+      className="relative z-10 w-full flex-1 flex flex-col items-center justify-between text-center px-4 sm:px-8 lg:px-14 xl:px-20"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
       {/* ══ CENTERED CONTENT ═══════════════════════════════════════════ */}
-      {/* Year label */}
-      <motion.p
-        className="text-xs sm:text-sm tracking-[0.28em] uppercase text-skcet-gold font-medium mb-3"
+      {/* 25 Years of Excellence Golden Emblem */}
+      <motion.div
+        className="mt-20 flex justify-center"
         variants={fadeUp}
       >
-        25 Years of Excellence
-      </motion.p>
-
-      {/* SKCET gold wordmark */}
-      <motion.p
-        className="font-display text-3xl sm:text-4xl font-bold text-skcet-gold tracking-wide mb-4 leading-none"
-        variants={fadeUp}
-      >
-        SKCET
-      </motion.p>
+        <img
+          src="/images/25-years-of-excellence.png"
+          alt="25 Years of Excellence"
+          className="h-14 sm:h-18 md:h-22 lg:h-24 w-auto object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)] hover:scale-105 transition-transform duration-300"
+          loading="eager"
+        />
+      </motion.div>
 
       {/* Main heading */}
       <motion.h1
@@ -58,7 +55,7 @@ const HeroContent = () => {
           text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl
           font-semibold text-white
           leading-tight tracking-tight
-          max-w-4xl mb-12 mx-auto text-center
+          max-w-4xl mx-auto text-center
         "
         variants={fadeUp}
       >
@@ -69,7 +66,7 @@ const HeroContent = () => {
 
       {/* ── Cards Row (Accreditations & Admissions) ── */}
       <motion.div 
-        className="w-full flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-10 mt-4"
+        className="w-full flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-10 mb-8"
         variants={fadeUp}
       >
         {/* ── Accreditation badges ── */}

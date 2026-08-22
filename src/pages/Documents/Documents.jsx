@@ -252,10 +252,129 @@ const Documents = () => {
       const submissionDateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
       const timestampStr = `${submissionDateStr}, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
+      const isCoeFlow = selectedDocForApply.flowType === 'coe_exam';
+
+      const timeline = isCoeFlow
+        ? [
+            {
+              stage: '01 Request Submitted',
+              description: 'Application successfully logged on student portal.',
+              status: 'completed',
+              timestamp: timestampStr,
+              actor: `Student (${formData.name})`,
+            },
+            {
+              stage: '02 Tutor Approval',
+              description: 'Forwarded to Class Tutor for academic standing verification.',
+              status: 'in_progress',
+              timestamp: 'In Review',
+              actor: DEFAULT_STUDENT.mentorName,
+            },
+            {
+              stage: '03 HOD Approval',
+              description: 'Awaiting Tutor clearance to forward to Controller of Examinations (COE).',
+              status: 'not_reached',
+              timestamp: 'Queued',
+              actor: DEFAULT_STUDENT.hodName,
+            },
+            {
+              stage: '04 COE Verification & Approval',
+              description: 'Controller of Examinations (COE) grade audit, credit ledger & exam wing clearance.',
+              status: 'not_reached',
+              timestamp: 'Queued',
+              actor: DEFAULT_STUDENT.coeName,
+            },
+            {
+              stage: '05 Document Processing',
+              description: 'Preparation of official COE certificate with security hologram & QR seal.',
+              status: 'not_reached',
+              timestamp: `Expected in ${selectedDocForApply.processingTime}`,
+              actor: 'Autonomous Examination Section',
+            },
+            {
+              stage: '06 E-Document Delivered',
+              description: `Digitally signed official e-document will be sent to ${formData.email}.`,
+              status: 'not_reached',
+              timestamp: 'Pending',
+              actor: 'COE Exam Portal Mailer',
+            },
+            {
+              stage: '07 Hard Copy Ready',
+              description: formData.deliveryPreference.includes('Hard Copy') 
+                ? 'Sealed copy available for physical pickup at COE Dispatch Counter 02.' 
+                : 'Not requested (Digital Only).',
+              status: 'not_reached',
+              timestamp: 'Pending',
+              actor: 'COE Dispatch Counter 02',
+            },
+          ]
+        : [
+            {
+              stage: '01 Request Submitted',
+              description: 'Application successfully logged on portal.',
+              status: 'completed',
+              timestamp: timestampStr,
+              actor: `Student (${formData.name})`,
+            },
+            {
+              stage: '02 Tutor Approval',
+              description: 'Forwarded to Class Tutor for verification.',
+              status: 'in_progress',
+              timestamp: 'In Review',
+              actor: DEFAULT_STUDENT.mentorName,
+            },
+            {
+              stage: '03 HOD Approval',
+              description: 'Awaiting Tutor clearance.',
+              status: 'not_reached',
+              timestamp: 'Queued',
+              actor: DEFAULT_STUDENT.hodName,
+            },
+            {
+              stage: '04 Dean Approval',
+              description: 'Dean Academic clearance queue.',
+              status: 'not_reached',
+              timestamp: 'Queued',
+              actor: DEFAULT_STUDENT.deanName,
+            },
+            {
+              stage: '05 Administrative Verification',
+              description: 'Administration Office verification.',
+              status: 'not_reached',
+              timestamp: 'Queued',
+              actor: 'Student Records Section',
+            },
+            {
+              stage: '06 Document Processing',
+              description: 'Preparation of digital certificate with QR seal.',
+              status: 'not_reached',
+              timestamp: `Expected in ${selectedDocForApply.processingTime}`,
+              actor: 'SKCET Document Automation Core',
+            },
+            {
+              stage: '07 E-Document Delivered',
+              description: `Will be sent to ${formData.email}.`,
+              status: 'not_reached',
+              timestamp: 'Pending',
+              actor: 'Institutional Mailer',
+            },
+            {
+              stage: '08 Hard Copy Ready',
+              description: formData.deliveryPreference.includes('Hard Copy') 
+                ? 'Physical pickup at Counter 04 upon completion.' 
+                : 'Not requested (Digital Only).',
+              status: 'not_reached',
+              timestamp: 'Pending',
+              actor: 'Central Dispatch Desk',
+            },
+          ];
+
       const newRequestObject = {
         id: newId,
         documentId: selectedDocForApply.id,
         documentName: selectedDocForApply.name,
+        code: selectedDocForApply.code || selectedDocForApply.name,
+        flowType: selectedDocForApply.flowType,
         submissionDate: submissionDateStr,
         currentStatus: 'TUTOR_PENDING',
         statusLabel: 'Tutor Approval Pending',
@@ -264,63 +383,7 @@ const Documents = () => {
         purpose: formData.purpose === 'Other' ? formData.otherPurpose : formData.purpose,
         specificDetails: { ...formData.specificDetails },
         attachedFiles: [...formData.attachedFiles],
-        timeline: [
-          {
-            stage: '01 Request Submitted',
-            description: 'Application successfully logged on portal.',
-            status: 'completed',
-            timestamp: timestampStr,
-            actor: `Student (${formData.name})`,
-          },
-          {
-            stage: '02 Tutor Approval',
-            description: 'Forwarded to Class Tutor for verification.',
-            status: 'in_progress',
-            timestamp: 'In Review',
-            actor: DEFAULT_STUDENT.mentorName,
-          },
-          {
-            stage: '03 HOD Approval',
-            description: 'Awaiting Tutor clearance.',
-            status: 'not_reached',
-            timestamp: 'Queued',
-            actor: DEFAULT_STUDENT.hodName,
-          },
-          {
-            stage: '04 Dean Approval',
-            description: 'Dean Academic clearance queue.',
-            status: 'not_reached',
-            timestamp: 'Queued',
-            actor: DEFAULT_STUDENT.deanName,
-          },
-          {
-            stage: '05 Administrative Verification',
-            description: 'Administration Office verification.',
-            status: 'not_reached',
-            timestamp: 'Queued',
-            actor: 'Student Records Section',
-          },
-          {
-            stage: '06 Document Processing',
-            description: 'Preparation of digital certificate with QR seal.',
-            status: 'not_reached',
-            timestamp: 'Expected in 3–4 working days',
-          },
-          {
-            stage: '07 E-Document Delivered',
-            description: `Will be sent to ${formData.email}.`,
-            status: 'not_reached',
-            timestamp: 'Pending',
-          },
-          {
-            stage: '08 Hard Copy Ready',
-            description: formData.deliveryPreference.includes('Hard Copy') 
-              ? 'Physical pickup at Counter 04 upon completion.' 
-              : 'Not requested (Digital Only).',
-            status: 'not_reached',
-            timestamp: 'Pending',
-          },
-        ],
+        timeline: timeline,
       };
 
       setRequestsList(prev => [newRequestObject, ...prev]);
@@ -445,26 +508,41 @@ const Documents = () => {
                   className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 flex flex-col justify-between hover:border-amber-400 hover:shadow-md transition-all duration-200 group shadow-2xs"
                 >
                   <div>
-                    {/* Top Row: Icon + Category Badge */}
+                    {/* Top Row: Icon + Document Code + Category Badge */}
                     <div className="flex items-center justify-between mb-3.5">
                       <div className="w-10 h-10 rounded-xl bg-skcet-navy/5 text-skcet-navy group-hover:bg-skcet-navy group-hover:text-amber-400 flex items-center justify-center transition-colors">
                         <Icon size={20} />
                       </div>
-                      <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-wider">
-                        {doc.category}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 uppercase">
+                          {doc.code || doc.name}
+                        </span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-wider">
+                          {doc.category}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Title & Description */}
                     <h3 className="font-bold text-gray-900 text-base mb-1.5 leading-snug group-hover:text-skcet-navy transition-colors">
                       {doc.name}
                     </h3>
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4">
+                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-3.5">
                       {doc.description}
                     </p>
 
-                    {/* Metadata indicators */}
-                    <div className="space-y-1.5 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-5">
+                    {/* Metadata & Approval Flow indicators */}
+                    <div className="space-y-2 text-[11px] text-gray-600 border-t border-gray-100 pt-3 mb-5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-400">Approval Flow:</span>
+                        <span className={`font-semibold px-2 py-0.5 rounded text-[10.5px] ${
+                          doc.flowType === 'coe_exam'
+                            ? 'bg-amber-100 text-amber-900 font-bold border border-amber-300'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {doc.flowSummary}
+                        </span>
+                      </div>
                       <div className="flex items-center justify-between">
                         <span className="text-gray-400">Processing:</span>
                         <span className="font-medium text-gray-800">{doc.processingTime}</span>
@@ -943,6 +1021,23 @@ const Documents = () => {
                         <span className="text-gray-400 block text-[10px] uppercase font-bold">Delivery Channels</span>
                         <span className="font-bold text-gray-900">{selectedDocForApply.delivery}</span>
                       </div>
+                    </div>
+
+                    {/* Approval Chain Notice */}
+                    <div className={`p-3 rounded-lg border text-xs flex items-center justify-between ${
+                      selectedDocForApply.flowType === 'coe_exam'
+                        ? 'bg-amber-50 border-amber-300 text-amber-900'
+                        : 'bg-gray-50 border-gray-200 text-gray-800'
+                    }`}>
+                      <div>
+                        <span className="text-[10px] uppercase font-bold block text-gray-500">Official Approval Route</span>
+                        <span className="font-bold">{selectedDocForApply.flowSummary}</span>
+                      </div>
+                      {selectedDocForApply.flowType === 'coe_exam' && (
+                        <span className="text-[10.5px] font-bold px-2 py-0.5 rounded bg-amber-200/80 text-amber-950">
+                          Autonomous COE Wing
+                        </span>
+                      )}
                     </div>
 
                     {/* Requirements Checklist */}

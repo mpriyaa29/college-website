@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Lock,
@@ -10,9 +11,9 @@ import {
   AlertCircle,
   ArrowRight,
   Mail,
-  ShieldCheck,
-  RotateCcw,
-  FileCheck
+  FileCheck,
+  ChevronRight,
+  ArrowLeft
 } from 'lucide-react';
 import {
   FEE_CATEGORIES,
@@ -55,18 +56,55 @@ const formatReceiptDate = (d = new Date()) => {
 };
 
 const OnlinePayment = () => {
-  // Navigation & Category state
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const location = useLocation();
+  const arrearState = location.state?.fromArrear ? location.state : null;
+
+  // Navigation & Category state (null = Initial Categories List, object = Details Page)
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    if (arrearState?.categoryId) {
+      return FEE_CATEGORIES.find(c => c.id === arrearState.categoryId) || FEE_CATEGORIES[0];
+    }
+    return null;
+  });
   
   // Verification input state
-  const [regNo, setRegNo] = useState('');
-  const [dob, setDob] = useState('');
+  const [regNo, setRegNo] = useState(() => arrearState?.rollNo || '');
+  const [dob, setDob] = useState(() => arrearState?.dob || '');
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState('');
-  const [verifiedStudent, setVerifiedStudent] = useState(null);
+  const [verifiedStudent, setVerifiedStudent] = useState(() => {
+    if (!arrearState) return null;
+    return SAMPLE_STUDENTS[arrearState.rollNo] || {
+      rollNo: arrearState.rollNo || '7376231CS201',
+      name: 'Rahul Sundaram',
+      dob: arrearState.dob || '2004-05-14',
+      department: 'Computer Science and Engineering',
+      degree: 'B.E. CSE',
+      batch: '2023 - 2027',
+      year: '3rd Year',
+      section: 'B',
+      email: 'rahul.sundaram@skcet.ac.in',
+      phone: '+91 98765 43210',
+      allocatedFees: [],
+    };
+  });
 
   // Fee selection & Part-Payment state
-  const [activeFeeItem, setActiveFeeItem] = useState(null);
+  const [activeFeeItem, setActiveFeeItem] = useState(() => {
+    if (!arrearState) return null;
+    const catId = arrearState.categoryId || 'college-higher-exam-1st';
+    return {
+      id: `FE-ARREAR-${Date.now()}`,
+      category: catId,
+      title: arrearState.feeTitle || 'Autonomous Arrear Examination Fee',
+      totalAmount: arrearState.totalAmount || 1800,
+      paidAmount: 0,
+      pendingAmount: arrearState.totalAmount || 1800,
+      minPartPayment: arrearState.totalAmount || 1800,
+      dueDate: '30 Apr 2026',
+      status: 'pending',
+    };
+  });
   const [isPartPayment, setIsPartPayment] = useState(false);
   const [customAmount, setCustomAmount] = useState('');
   const [partError, setPartError] = useState('');
@@ -78,7 +116,7 @@ const OnlinePayment = () => {
   const [activeReceipt, setActiveReceipt] = useState(null);
   const [emailNotification, setEmailNotification] = useState(null);
 
-  // Handle clicking on a fee type
+  // Handle clicking on a fee type: Navigate to Details Page
   const handleSelectCategory = (cat) => {
     setSelectedCategory(cat);
     setAuthError('');
@@ -110,6 +148,16 @@ const OnlinePayment = () => {
         setCustomAmount('');
       }
     }
+
+    // Scroll to top of details view smoothly
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  };
+
+  // Back to Categories List
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+    setAuthError('');
+    window.scrollTo({ top: 120, behavior: 'smooth' });
   };
 
   // Quick Demo Auto-fill
@@ -405,463 +453,583 @@ const OnlinePayment = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[#f8f9fa] pt-32 sm:pt-36 lg:pt-40 pb-20 text-gray-800">
+    <main className="min-h-screen bg-[#f1f3f6] pt-32 sm:pt-36 lg:pt-40 pb-20 text-gray-800">
       
-      {/* ───────────────────────────────────────────────────────────────────────
-          1. CLEAN TOPIC HEADER
-         ─────────────────────────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-5">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-700 mb-1">
-              <ShieldCheck size={16} /> Official Institutional Portal
-            </div>
-            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-skcet-navy tracking-tight">
-              Online Fee Payment Portal
-            </h1>
-          </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="flex items-center gap-3 text-xs text-gray-500 bg-white border border-gray-200 px-3.5 py-2 rounded-xl shadow-xs self-start sm:self-auto">
-            <Lock size={14} className="text-emerald-600" />
-            <span>256-Bit SSL Encrypted & PCI-DSS Certified</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Confirmation Email Toast Banner */}
-      <AnimatePresence>
-        {emailNotification && (
+        {/* ───────────────────────────────────────────────────────────────────
+            VIEW 1: INITIAL CATEGORIES LIST (MATCHING UPLOADED SCREENSHOT)
+           ─────────────────────────────────────────────────────────────────── */}
+        {!selectedCategory ? (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-6"
+            className="shadow-sm rounded-xl overflow-hidden"
           >
-            <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-4 flex items-center justify-between gap-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                  <Mail size={16} />
-                </div>
+            {/* Top Institutional Header Bar */}
+            <div className="bg-[#0c1f40] text-white p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <img
+                  src="/images/skcet-emblem.png"
+                  alt="SKCET Emblem"
+                  className="h-12 sm:h-14 w-auto object-contain flex-shrink-0"
+                />
                 <div>
-                  <div className="text-xs font-bold text-emerald-900">
-                    Payment Confirmation Email Sent!
-                  </div>
-                  <div className="text-xs text-emerald-700 mt-0.5">
-                    Official e-receipt ({emailNotification.receiptNo}) has been dispatched to <strong>{emailNotification.email}</strong>.
-                  </div>
+                  <h2 className="font-bold text-white text-sm sm:text-base md:text-lg tracking-wide uppercase leading-tight font-sans">
+                    SRI KRISHNA COLLEGE OF ENGINEERING AND TECHNOLOGY
+                  </h2>
+                  <p className="text-[10px] sm:text-[11px] text-white/80 mt-1">
+                    An Autonomous Institution | Affiliated to Anna University | Accredited by NAAC with A++ Grade
+                  </p>
                 </div>
               </div>
-              <button
-                onClick={() => setEmailNotification(null)}
-                className="text-xs text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 cursor-pointer"
-              >
-                ✕ Dismiss
-              </button>
+
+              <div className="flex items-center gap-2.5 bg-white/10 border border-white/20 px-3.5 py-2 rounded-lg text-xs self-start sm:self-auto flex-shrink-0">
+                <Lock size={15} className="text-amber-400" />
+                <div>
+                  <div className="font-semibold text-white text-[11px] leading-tight">Secure Payment Gateway</div>
+                  <div className="text-[10px] text-white/70">256-bit SSL Encrypted</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Categories Container */}
+            <div className="bg-white border-x border-b border-gray-200 p-6 sm:p-8">
+              
+              {/* Heading */}
+              <div className="mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#0c1f40] tracking-tight">
+                  Select Payment Category
+                </h1>
+                <div className="h-1 w-12 bg-amber-500 rounded-full mt-2 mb-2" />
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Choose the fee you wish to pay and proceed securely.
+                </p>
+              </div>
+
+              {/* 8 Category Items Container */}
+              <div className="border border-gray-200 bg-white rounded-xl overflow-hidden shadow-2xs divide-y divide-gray-100 mb-6">
+                
+                {/* Rows 01 to 06 */}
+                {FEE_CATEGORIES.slice(0, 6).map((cat) => (
+                  <div
+                    key={cat.id}
+                    onClick={() => handleSelectCategory(cat)}
+                    className="p-4 sm:p-5 flex items-center justify-between hover:bg-gray-50/90 cursor-pointer transition-colors group"
+                  >
+                    <div className="flex items-center gap-4 sm:gap-5">
+                      <div className="w-10 h-10 rounded-lg bg-blue-50/80 text-blue-900 font-mono font-bold text-sm flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 group-hover:text-amber-900 transition-colors">
+                        {cat.num}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-sm sm:text-base group-hover:text-skcet-navy transition-colors">
+                          {cat.title}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-0.5 leading-snug">
+                          {cat.description}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight size={18} className="text-gray-400 group-hover:text-skcet-navy group-hover:translate-x-1 transition-all flex-shrink-0" />
+                  </div>
+                ))}
+
+                {/* Bottom Row for 07 & 08 in 2 Columns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                  {FEE_CATEGORIES.slice(6, 8).map((cat) => (
+                    <div
+                      key={cat.id}
+                      onClick={() => handleSelectCategory(cat)}
+                      className="p-4 sm:p-5 flex items-center justify-between hover:bg-gray-50/90 cursor-pointer transition-colors group"
+                    >
+                      <div className="flex items-center gap-4 sm:gap-5">
+                        <div className="w-10 h-10 rounded-lg bg-blue-50/80 text-blue-900 font-mono font-bold text-sm flex items-center justify-center flex-shrink-0 group-hover:bg-amber-100 group-hover:text-amber-900 transition-colors">
+                          {cat.num}
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-gray-900 text-sm sm:text-base group-hover:text-skcet-navy transition-colors">
+                            {cat.title}
+                          </h3>
+                          <p className="text-xs text-gray-500 mt-0.5 leading-snug">
+                            {cat.description}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight size={18} className="text-gray-400 group-hover:text-skcet-navy group-hover:translate-x-1 transition-all flex-shrink-0" />
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* Bottom Trust Callout Banner */}
+              <div className="bg-blue-50/70 border-l-4 border-blue-600 rounded-r-lg p-4">
+                <h4 className="font-bold text-blue-950 text-xs sm:text-sm">
+                  All payments are processed securely through SKCET Payment Gateway.
+                </h4>
+                <p className="text-xs text-blue-800/80 mt-0.5">
+                  Your transaction details are safe and encrypted.
+                </p>
+              </div>
+
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ───────────────────────────────────────────────────────────────────────
-          2. EXACT 8 PAYMENT TYPES GRID (Matching Reference)
-         ─────────────────────────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xs font-bold tracking-[0.18em] uppercase text-gray-500">
-            Select Payment Category
-          </h2>
-          {selectedCategory && (
-            <button
-              onClick={() => {
-                setSelectedCategory(null);
-                setVerifiedStudent(null);
-                setActiveFeeItem(null);
-              }}
-              className="text-xs text-amber-700 hover:text-amber-800 flex items-center gap-1 font-semibold transition-colors cursor-pointer"
-            >
-              <RotateCcw size={12} /> Clear Selection
-            </button>
-          )}
-        </div>
-
-        {/* Rows 1 & 2: 3 Columns Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          {FEE_CATEGORIES.slice(0, 6).map((cat) => {
-            const isSelected = selectedCategory?.id === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => handleSelectCategory(cat)}
-                className={`
-                  p-6 sm:p-7 rounded-sm transition-all text-center flex items-center justify-center min-h-[96px] cursor-pointer
-                  ${isSelected
-                    ? 'border-[2.5px] border-[#f59e0b] bg-white text-gray-900 font-bold shadow-xs'
-                    : 'border border-gray-300 bg-white hover:border-gray-400 text-gray-800 font-medium hover:bg-gray-50/50 shadow-2xs'}
-                `}
-              >
-                <span className="text-xs sm:text-[13px] leading-snug">
-                  {cat.title}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Row 3: Centered 2 Columns Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-          {FEE_CATEGORIES.slice(6, 8).map((cat) => {
-            const isSelected = selectedCategory?.id === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => handleSelectCategory(cat)}
-                className={`
-                  p-6 sm:p-7 rounded-sm transition-all text-center flex items-center justify-center min-h-[96px] cursor-pointer
-                  ${isSelected
-                    ? 'border-[2.5px] border-[#f59e0b] bg-white text-gray-900 font-bold shadow-xs'
-                    : 'border border-gray-300 bg-white hover:border-gray-400 text-gray-800 font-medium hover:bg-gray-50/50 shadow-2xs'}
-                `}
-              >
-                <span className="text-xs sm:text-[13px] leading-snug">
-                  {cat.title}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ───────────────────────────────────────────────────────────────────────
-          3. AUTHENTICATION / VERIFICATION FORM (When Category Clicked)
-         ─────────────────────────────────────────────────────────────────────── */}
-      <AnimatePresence mode="wait">
-        {selectedCategory && !verifiedStudent && (
+        ) : (
+          /* ───────────────────────────────────────────────────────────────────
+              VIEW 2: DETAILS & VERIFICATION / PAYMENT PAGE
+             ─────────────────────────────────────────────────────────────────── */
           <motion.div
-            key="auth-panel"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8"
+            className="space-y-6"
           >
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8">
-              <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-skcet-navy text-amber-400 flex items-center justify-center flex-shrink-0">
-                  <Lock size={20} />
+            {/* Top Bar with Back to Categories Button */}
+            <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-4 shadow-2xs">
+              <button
+                type="button"
+                onClick={handleBackToCategories}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-skcet-navy hover:text-amber-700 transition-colors cursor-pointer"
+              >
+                <ArrowLeft size={16} />
+                <span>Back to Payment Categories</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold bg-amber-50 text-amber-900 border border-amber-200 px-2.5 py-0.5 rounded">
+                  Category {selectedCategory.num}
+                </span>
+                <span className="text-xs text-gray-500 hidden sm:inline font-medium">
+                  {selectedCategory.title}
+                </span>
+              </div>
+            </div>
+
+            {/* Email Toast Banner */}
+            <AnimatePresence>
+              {emailNotification && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-4 flex items-center justify-between gap-4 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                        <Mail size={16} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-emerald-900">
+                          Payment Confirmation Email Sent!
+                        </div>
+                        <div className="text-xs text-emerald-700 mt-0.5">
+                          Official e-receipt ({emailNotification.receiptNo}) has been dispatched to <strong>{emailNotification.email}</strong>.
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setEmailNotification(null)}
+                      className="text-xs text-emerald-700 hover:text-emerald-900 font-semibold px-2 py-1 cursor-pointer"
+                    >
+                      ✕ Dismiss
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Verification Form (If student not yet verified) */}
+            {!verifiedStudent && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8">
+                <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-skcet-navy text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <Lock size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-base">
+                      Student Verification — {selectedCategory.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Enter your Register Number and Date of Birth to view your allocated dues.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-gray-900 text-base">
-                    Student Verification — {selectedCategory.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Enter your Register Number and Date of Birth to fetch your allocated dues.
-                  </p>
+
+                <form onSubmit={handleVerifyStudent} className="space-y-4 max-w-xl">
+                  {/* Reg No */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                      Register Number / Roll No
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                        <User size={16} />
+                      </div>
+                      <input
+                        type="text"
+                        value={regNo}
+                        onChange={(e) => setRegNo(e.target.value)}
+                        placeholder="e.g. 7376231CS201"
+                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 uppercase tracking-wider"
+                      />
+                    </div>
+                  </div>
+
+                  {/* DOB */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                      Date of Birth (DOB)
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                        <Calendar size={16} />
+                      </div>
+                      <input
+                        type="date"
+                        value={dob}
+                        onChange={(e) => setDob(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  {authError && (
+                    <p className="text-xs text-red-600 font-medium flex items-center gap-1.5 pt-1">
+                      <AlertCircle size={14} /> {authError}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={authLoading}
+                    className="w-full sm:w-auto bg-skcet-navy hover:bg-[#121c33] text-white font-semibold text-sm px-8 py-3.5 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 mt-4 cursor-pointer"
+                  >
+                    {authLoading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Verifying Credentials...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Verify & View Allocated Dues</span>
+                        <ArrowRight size={16} className="text-amber-400" />
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                {/* Quick Auto-Fill Helpers for Easy Testing */}
+                <div className="mt-6 pt-5 border-t border-gray-100 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                  <span className="font-semibold text-gray-700">Quick Test Profiles:</span>
+                  {Object.keys(SAMPLE_STUDENTS).map((roll) => (
+                    <button
+                      key={roll}
+                      type="button"
+                      onClick={() => handleQuickFill(roll)}
+                      className="px-2.5 py-1 rounded-md border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-mono text-xs transition-colors cursor-pointer"
+                    >
+                      {roll} (DOB: {SAMPLE_STUDENTS[roll].dob})
+                    </button>
+                  ))}
                 </div>
               </div>
+            )}
 
-              <form onSubmit={handleVerifyStudent} className="space-y-4 max-w-xl">
-                {/* Field 1: Reg No */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                    Register Number / Roll No
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                      <User size={16} />
+            {/* Verified Student Details & Fee Allocation View */}
+            {verifiedStudent && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8">
+                
+                {/* Student Identification Banner */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-skcet-navy text-amber-400 font-display text-xl font-bold flex items-center justify-center shadow-xs">
+                      {verifiedStudent.name.charAt(0)}
                     </div>
-                    <input
-                      type="text"
-                      value={regNo}
-                      onChange={(e) => setRegNo(e.target.value)}
-                      placeholder="e.g. 7376231CS201"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 uppercase tracking-wider"
-                    />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-gray-900 text-lg">{verifiedStudent.name}</h3>
+                        <span className="text-xs font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold">
+                          {verifiedStudent.rollNo}
+                        </span>
+                      </div>
+                      <p className="text-gray-500 text-xs mt-0.5">{verifiedStudent.department} · {verifiedStudent.year}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 text-xs bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <div>
+                      <span className="text-gray-400 block text-[10px] uppercase">DOB</span>
+                      <span className="font-semibold text-gray-800">{verifiedStudent.dob}</span>
+                    </div>
+                    <div className="border-l pl-3 border-gray-200">
+                      <span className="text-gray-400 block text-[10px] uppercase">Email For Receipt</span>
+                      <span className="font-semibold text-gray-800">{verifiedStudent.email}</span>
+                    </div>
+                    <div className="border-l pl-3 border-gray-200">
+                      <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                        <CheckCircle2 size={13} /> Verified
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Field 2: Date of Birth */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                    Date of Birth (DOB)
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                      <Calendar size={16} />
-                    </div>
-                    <input
-                      type="date"
-                      value={dob}
-                      onChange={(e) => setDob(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
-                    />
-                  </div>
-                </div>
+                {/* Fee Allocation Breakdown */}
+                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
+                  Allocated Fee Breakdown: <span className="text-skcet-navy">{selectedCategory.title}</span>
+                </h4>
 
-                {authError && (
-                  <p className="text-xs text-red-600 font-medium flex items-center gap-1.5 pt-1">
-                    <AlertCircle size={14} /> {authError}
-                  </p>
+                {activeFeeItem ? (
+                  <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-5 mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-4 mb-4">
+                      <div>
+                        <h5 className="font-bold text-gray-900 text-base">{activeFeeItem.title}</h5>
+                        <p className="text-xs text-gray-500 mt-0.5">Due Date: {activeFeeItem.dueDate}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase ${
+                          activeFeeItem.pendingAmount === 0 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : activeFeeItem.paidAmount > 0 
+                              ? 'bg-amber-100 text-amber-800' 
+                              : 'bg-rose-100 text-rose-800'
+                        }`}>
+                          {activeFeeItem.pendingAmount === 0 ? 'Settled' : activeFeeItem.paidAmount > 0 ? 'Partially Paid' : 'Pending'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Summary Grid */}
+                    <div className="grid grid-cols-3 gap-3 text-center mb-6">
+                      <div className="bg-white p-3 rounded-md border border-gray-200">
+                        <span className="text-[11px] text-gray-400 uppercase font-medium block">Total Allocated</span>
+                        <span className="font-display text-base font-bold text-gray-900">
+                          ₹{activeFeeItem.totalAmount.toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border border-gray-200">
+                        <span className="text-[11px] text-gray-400 uppercase font-medium block">Paid So Far</span>
+                        <span className="font-display text-base font-bold text-emerald-700">
+                          ₹{activeFeeItem.paidAmount.toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border border-amber-200 bg-amber-50/30">
+                        <span className="text-[11px] text-amber-800 uppercase font-bold block">Remaining Due</span>
+                        <span className="font-display text-base font-bold text-skcet-navy">
+                          ₹{activeFeeItem.pendingAmount.toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Part-Part Payment Option */}
+                    {activeFeeItem.pendingAmount > 0 && (
+                      <div className="bg-white rounded-lg border border-gray-200 p-5">
+                        <h6 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
+                          Choose Payment Structure
+                        </h6>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                          {/* Option 1: Full Payment */}
+                          <div
+                            onClick={() => setIsPartPayment(false)}
+                            className={`p-3.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
+                              !isPartPayment ? 'bg-amber-50/60 border-amber-400 ring-1 ring-amber-400' : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${!isPartPayment ? 'border-amber-600 bg-amber-600 text-white' : 'border-gray-300'}`}>
+                                {!isPartPayment && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                              </div>
+                              <div>
+                                <span className="text-xs font-bold text-gray-900 block">Full Settlement</span>
+                                <span className="text-[11px] text-gray-500">Pay entire remaining balance</span>
+                              </div>
+                            </div>
+                            <span className="font-display text-sm font-bold text-gray-900">
+                              ₹{activeFeeItem.pendingAmount.toLocaleString('en-IN')}
+                            </span>
+                          </div>
+
+                          {/* Option 2: Part Payment */}
+                          <div
+                            onClick={() => setIsPartPayment(true)}
+                            className={`p-3.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
+                              isPartPayment ? 'bg-amber-50/60 border-amber-400 ring-1 ring-amber-400' : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isPartPayment ? 'border-amber-600 bg-amber-600 text-white' : 'border-gray-300'}`}>
+                                {isPartPayment && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                              </div>
+                              <div>
+                                <span className="text-xs font-bold text-gray-900 block">Part - Part Payment</span>
+                                <span className="text-[11px] text-gray-500">Pay installment amount</span>
+                              </div>
+                            </div>
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                              Flexible
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Part Payment Input */}
+                        {isPartPayment && (
+                          <div className="bg-amber-50/40 border border-amber-200 rounded-lg p-4 mb-4">
+                            <label className="block text-xs font-bold text-gray-800 mb-1.5">
+                              Enter Part Payment Amount (₹)
+                            </label>
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="number"
+                                value={customAmount}
+                                onChange={(e) => {
+                                  setCustomAmount(e.target.value);
+                                  setPartError('');
+                                }}
+                                placeholder={`Min ₹${activeFeeItem.minPartPayment.toLocaleString('en-IN')}`}
+                                className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                              />
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-gray-500 mt-2">
+                              <span>Minimum Part Payment: <strong>₹{activeFeeItem.minPartPayment.toLocaleString('en-IN')}</strong></span>
+                              <span>Remaining Balance Post-Pay: <strong>₹{remainingAfterPayment.toLocaleString('en-IN')}</strong></span>
+                            </div>
+                          </div>
+                        )}
+
+                        {partError && (
+                          <p className="text-xs text-red-600 font-medium flex items-center gap-1 mb-4">
+                            <AlertCircle size={14} /> {partError}
+                          </p>
+                        )}
+
+                        {/* Total & Proceed Button */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-gray-100">
+                          <div>
+                            <span className="text-[11px] uppercase tracking-wider text-gray-400 block font-medium">Amount to Pay Now</span>
+                            <span className="font-display text-2xl font-bold text-skcet-navy">
+                              ₹{payableNow.toLocaleString('en-IN')}
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleProceedToPayment}
+                            className="bg-skcet-navy hover:bg-[#121c33] text-white font-semibold text-sm px-8 py-3.5 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <Lock size={16} className="text-amber-400" />
+                            <span>Proceed to Payment Gateway</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeFeeItem.pendingAmount === 0 && (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
+                        <p className="text-xs text-emerald-800 font-semibold">
+                          All dues for this category have been cleared! You can view and download your payment receipts from the history below.
+                        </p>
+                      </div>
+                    )}
+
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border border-dashed border-gray-200 rounded-lg">
+                    <p className="text-xs text-gray-500">No allocated fee record found under this category.</p>
+                  </div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={authLoading}
-                  className="w-full sm:w-auto bg-skcet-navy hover:bg-[#121c33] text-white font-semibold text-sm px-8 py-3.5 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 mt-4 cursor-pointer"
-                >
-                  {authLoading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Verifying Credentials...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Verify & View Allocated Dues</span>
-                      <ArrowRight size={16} className="text-amber-400" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              {/* Quick Auto-Fill Helpers for Easy Testing */}
-              <div className="mt-6 pt-5 border-t border-gray-100 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                <span className="font-semibold text-gray-700">Quick Test Profiles:</span>
-                {Object.keys(SAMPLE_STUDENTS).map((roll) => (
-                  <button
-                    key={roll}
-                    type="button"
-                    onClick={() => handleQuickFill(roll)}
-                    className="px-2.5 py-1 rounded-md border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-mono text-xs transition-colors cursor-pointer"
-                  >
-                    {roll} (DOB: {SAMPLE_STUDENTS[roll].dob})
-                  </button>
-                ))}
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
 
-      {/* ───────────────────────────────────────────────────────────────────────
-          4. ALLOCATED FEES & PART - PART PAYMENT
-         ─────────────────────────────────────────────────────────────────────── */}
-      <AnimatePresence mode="wait">
-        {verifiedStudent && selectedCategory && (
-          <motion.div
-            key="fee-breakdown"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-10"
-          >
+            {/* ── Payment History Ledger on Details View ── */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8">
-              
-              {/* Student Identification Banner */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-skcet-navy text-amber-400 font-display text-xl font-bold flex items-center justify-center shadow-xs">
-                    {verifiedStudent.name.charAt(0)}
+              <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0">
+                    <Receipt size={18} />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-gray-900 text-lg">{verifiedStudent.name}</h3>
-                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold">
-                        {verifiedStudent.rollNo}
-                      </span>
-                    </div>
-                    <p className="text-gray-500 text-xs mt-0.5">{verifiedStudent.department} · {verifiedStudent.year}</p>
+                    <h3 className="font-bold text-gray-900 text-base">Payment & Transaction History</h3>
+                    <p className="text-xs text-gray-500">
+                      {verifiedStudent 
+                        ? `Records for ${verifiedStudent.name} (${verifiedStudent.rollNo})` 
+                        : 'Verify your register number above to view your transaction log'}
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 text-xs bg-gray-50 p-3 rounded-lg border border-gray-100">
-                  <div>
-                    <span className="text-gray-400 block text-[10px] uppercase">DOB</span>
-                    <span className="font-semibold text-gray-800">{verifiedStudent.dob}</span>
-                  </div>
-                  <div className="border-l pl-3 border-gray-200">
-                    <span className="text-gray-400 block text-[10px] uppercase">Email For Receipt</span>
-                    <span className="font-semibold text-gray-800">{verifiedStudent.email}</span>
-                  </div>
-                  <div className="border-l pl-3 border-gray-200">
-                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                      <CheckCircle2 size={13} /> Verified
-                    </span>
-                  </div>
-                </div>
+                {verifiedStudent && (
+                  <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    {verifiedStudent.history.length} Record(s)
+                  </span>
+                )}
               </div>
 
-              {/* Fee Allocation Cards / Table */}
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
-                Allocated Fee Breakdown: <span className="text-skcet-navy">{selectedCategory.title}</span>
-              </h4>
-
-              {activeFeeItem ? (
-                <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-5 mb-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-4 mb-4">
-                    <div>
-                      <h5 className="font-bold text-gray-900 text-base">{activeFeeItem.title}</h5>
-                      <p className="text-xs text-gray-500 mt-0.5">Due Date: {activeFeeItem.dueDate}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase ${
-                        activeFeeItem.pendingAmount === 0 
-                          ? 'bg-emerald-100 text-emerald-800' 
-                          : activeFeeItem.paidAmount > 0 
-                            ? 'bg-amber-100 text-amber-800' 
-                            : 'bg-rose-100 text-rose-800'
-                      }`}>
-                        {activeFeeItem.pendingAmount === 0 ? 'Settled' : activeFeeItem.paidAmount > 0 ? 'Partially Paid' : 'Pending'}
-                      </span>
-                    </div>
+              {verifiedStudent ? (
+                verifiedStudent.history.length === 0 ? (
+                  <div className="text-center py-10 text-xs text-gray-400">
+                    No past transactions recorded on this portal yet.
                   </div>
-
-                  {/* Summary Grid */}
-                  <div className="grid grid-cols-3 gap-3 text-center mb-6">
-                    <div className="bg-white p-3 rounded-md border border-gray-200">
-                      <span className="text-[11px] text-gray-400 uppercase font-medium block">Total Allocated</span>
-                      <span className="font-display text-base font-bold text-gray-900">
-                        ₹{activeFeeItem.totalAmount.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="bg-white p-3 rounded-md border border-gray-200">
-                      <span className="text-[11px] text-gray-400 uppercase font-medium block">Paid So Far</span>
-                      <span className="font-display text-base font-bold text-emerald-700">
-                        ₹{activeFeeItem.paidAmount.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <div className="bg-white p-3 rounded-md border border-amber-200 bg-amber-50/30">
-                      <span className="text-[11px] text-amber-800 uppercase font-bold block">Remaining Due</span>
-                      <span className="font-display text-base font-bold text-skcet-navy">
-                        ₹{activeFeeItem.pendingAmount.toLocaleString('en-IN')}
-                      </span>
-                    </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-left">
+                      <thead>
+                        <tr className="border-b border-gray-200 text-gray-400 uppercase text-[10px]">
+                          <th className="py-3 px-3 font-semibold">Date</th>
+                          <th className="py-3 px-3 font-semibold">Receipt No</th>
+                          <th className="py-3 px-3 font-semibold">Fee Description</th>
+                          <th className="py-3 px-3 font-semibold">Payment Mode</th>
+                          <th className="py-3 px-3 font-semibold text-right">Amount Paid</th>
+                          <th className="py-3 px-3 font-semibold text-center">Status</th>
+                          <th className="py-3 px-3 font-semibold text-right">Bill / Slip</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 font-medium">
+                        {verifiedStudent.history.map((record) => (
+                          <tr key={record.id} className="hover:bg-gray-50/70 transition-colors">
+                            <td className="py-3.5 px-3 text-gray-600 whitespace-nowrap">{record.date}</td>
+                            <td className="py-3.5 px-3 font-mono font-semibold text-gray-800">{record.receiptNo}</td>
+                            <td className="py-3.5 px-3 text-gray-900 max-w-xs">{record.feeTitle}</td>
+                            <td className="py-3.5 px-3 text-gray-600">{record.paymentMode}</td>
+                            <td className="py-3.5 px-3 text-right font-bold text-gray-900 whitespace-nowrap font-display">
+                              ₹{record.amountPaid.toLocaleString('en-IN')}
+                            </td>
+                            <td className="py-3.5 px-3 text-center">
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                                {record.status}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-3 text-right whitespace-nowrap">
+                              <button
+                                type="button"
+                                onClick={() => handleViewHistoricalReceipt(record)}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:border-amber-400 hover:bg-amber-50 text-gray-700 hover:text-amber-900 text-xs font-semibold transition-colors cursor-pointer"
+                              >
+                                <FileCheck size={13} /> View Bill
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-
-                  {/* ── PART - PART PAYMENT OPTION ── */}
-                  {activeFeeItem.pendingAmount > 0 && (
-                    <div className="bg-white rounded-lg border border-gray-200 p-5">
-                      <h6 className="text-xs font-bold uppercase tracking-wider text-gray-700 mb-3">
-                        Choose Payment Structure
-                      </h6>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                        {/* Option 1: Full Payment */}
-                        <div
-                          onClick={() => setIsPartPayment(false)}
-                          className={`p-3.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
-                            !isPartPayment ? 'bg-amber-50/60 border-amber-400 ring-1 ring-amber-400' : 'bg-gray-50 border-gray-200'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${!isPartPayment ? 'border-amber-600 bg-amber-600 text-white' : 'border-gray-300'}`}>
-                              {!isPartPayment && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                            </div>
-                            <div>
-                              <span className="text-xs font-bold text-gray-900 block">Full Settlement</span>
-                              <span className="text-[11px] text-gray-500">Pay entire remaining balance</span>
-                            </div>
-                          </div>
-                          <span className="font-display text-sm font-bold text-gray-900">
-                            ₹{activeFeeItem.pendingAmount.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-
-                        {/* Option 2: Part Payment */}
-                        <div
-                          onClick={() => setIsPartPayment(true)}
-                          className={`p-3.5 rounded-lg border cursor-pointer transition-all flex items-center justify-between ${
-                            isPartPayment ? 'bg-amber-50/60 border-amber-400 ring-1 ring-amber-400' : 'bg-gray-50 border-gray-200'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isPartPayment ? 'border-amber-600 bg-amber-600 text-white' : 'border-gray-300'}`}>
-                              {isPartPayment && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                            </div>
-                            <div>
-                              <span className="text-xs font-bold text-gray-900 block">Part - Part Payment</span>
-                              <span className="text-[11px] text-gray-500">Pay installment amount</span>
-                            </div>
-                          </div>
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800">
-                            Flexible
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Part Payment Input */}
-                      {isPartPayment && (
-                        <div className="bg-amber-50/40 border border-amber-200 rounded-lg p-4 mb-4">
-                          <label className="block text-xs font-bold text-gray-800 mb-1.5">
-                            Enter Part Payment Amount (₹)
-                          </label>
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="number"
-                              value={customAmount}
-                              onChange={(e) => {
-                                setCustomAmount(e.target.value);
-                                setPartError('');
-                              }}
-                              placeholder={`Min ₹${activeFeeItem.minPartPayment.toLocaleString('en-IN')}`}
-                              className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-md text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between text-[11px] text-gray-500 mt-2">
-                            <span>Minimum Part Payment: <strong>₹{activeFeeItem.minPartPayment.toLocaleString('en-IN')}</strong></span>
-                            <span>Remaining Balance Post-Pay: <strong>₹{remainingAfterPayment.toLocaleString('en-IN')}</strong></span>
-                          </div>
-                        </div>
-                      )}
-
-                      {partError && (
-                        <p className="text-xs text-red-600 font-medium flex items-center gap-1 mb-4">
-                          <AlertCircle size={14} /> {partError}
-                        </p>
-                      )}
-
-                      {/* Total & Proceed Button */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-gray-100">
-                        <div>
-                          <span className="text-[11px] uppercase tracking-wider text-gray-400 block font-medium">Amount to Pay Now</span>
-                          <span className="font-display text-2xl font-bold text-skcet-navy">
-                            ₹{payableNow.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={handleProceedToPayment}
-                          className="bg-skcet-navy hover:bg-[#121c33] text-white font-semibold text-sm px-8 py-3.5 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <Lock size={16} className="text-amber-400" />
-                          <span>Proceed to Payment Gateway</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {activeFeeItem.pendingAmount === 0 && (
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
-                      <p className="text-xs text-emerald-800 font-semibold">
-                        All dues for this category have been cleared! You can view and download your payment receipts from the history below.
-                      </p>
-                    </div>
-                  )}
-
-                </div>
+                )
               ) : (
-                <div className="text-center py-8 border border-dashed border-gray-200 rounded-lg">
-                  <p className="text-xs text-gray-500">No allocated fee record found under this category.</p>
+                <div className="text-center py-12 border border-dashed border-gray-200 rounded-lg">
+                  <Receipt size={28} className="mx-auto text-gray-300 mb-2" />
+                  <p className="text-xs text-gray-500 font-medium">
+                    Please verify your Register Number & DOB above to access your complete payment history and bills.
+                  </p>
                 </div>
               )}
-
             </div>
+
           </motion.div>
         )}
-      </AnimatePresence>
+
+      </div>
 
       {/* ───────────────────────────────────────────────────────────────────────
-          5. PAYMENT MODAL (Checkout Simulation & Instant Bill Generation)
+          PAYMENT MODAL (Checkout Simulation & Official PDF Bill Generation)
          ─────────────────────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {isCheckoutOpen && (
@@ -1150,93 +1318,6 @@ const OnlinePayment = () => {
           </div>
         )}
       </AnimatePresence>
-
-      {/* ───────────────────────────────────────────────────────────────────────
-          6. PAYMENT HISTORY & BILLS (Below the Whole Process)
-         ─────────────────────────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-8">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0">
-                <Receipt size={18} />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-900 text-base">Payment & Transaction History</h3>
-                <p className="text-xs text-gray-500">
-                  {verifiedStudent 
-                    ? `Records for ${verifiedStudent.name} (${verifiedStudent.rollNo})` 
-                    : 'Verify your register number above to view your transaction log'}
-                </p>
-              </div>
-            </div>
-
-            {verifiedStudent && (
-              <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                {verifiedStudent.history.length} Record(s)
-              </span>
-            )}
-          </div>
-
-          {verifiedStudent ? (
-            verifiedStudent.history.length === 0 ? (
-              <div className="text-center py-10 text-xs text-gray-400">
-                No past transactions recorded on this portal yet.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead>
-                    <tr className="border-b border-gray-200 text-gray-400 uppercase text-[10px]">
-                      <th className="py-3 px-3 font-semibold">Date & Time</th>
-                      <th className="py-3 px-3 font-semibold">Receipt No</th>
-                      <th className="py-3 px-3 font-semibold">Fee Description</th>
-                      <th className="py-3 px-3 font-semibold">Payment Mode</th>
-                      <th className="py-3 px-3 font-semibold text-right">Amount Paid</th>
-                      <th className="py-3 px-3 font-semibold text-center">Status</th>
-                      <th className="py-3 px-3 font-semibold text-right">Bill / Slip</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 font-medium">
-                    {verifiedStudent.history.map((record) => (
-                      <tr key={record.id} className="hover:bg-gray-50/70 transition-colors">
-                        <td className="py-3.5 px-3 text-gray-600 whitespace-nowrap">{record.date}</td>
-                        <td className="py-3.5 px-3 font-mono font-semibold text-gray-800">{record.receiptNo}</td>
-                        <td className="py-3.5 px-3 text-gray-900 max-w-xs">{record.feeTitle}</td>
-                        <td className="py-3.5 px-3 text-gray-600">{record.paymentMode}</td>
-                        <td className="py-3.5 px-3 text-right font-bold text-gray-900 whitespace-nowrap font-display">
-                          ₹{record.amountPaid.toLocaleString('en-IN')}
-                        </td>
-                        <td className="py-3.5 px-3 text-center">
-                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                            {record.status}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-3 text-right whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => handleViewHistoricalReceipt(record)}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-gray-300 hover:border-amber-400 hover:bg-amber-50 text-gray-700 hover:text-amber-900 text-xs font-semibold transition-colors cursor-pointer"
-                          >
-                            <FileCheck size={13} /> View Bill
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )
-          ) : (
-            <div className="text-center py-12 border border-dashed border-gray-200 rounded-lg">
-              <Receipt size={28} className="mx-auto text-gray-300 mb-2" />
-              <p className="text-xs text-gray-500 font-medium">
-                Please select a payment category above and authenticate with your Register Number & DOB to access your complete payment history and bills.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
 
     </main>
   );

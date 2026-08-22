@@ -1418,7 +1418,7 @@ const SectionPage = () => {
 
   const [activeSectionId, setActiveSectionId] = useState(getInitialActiveSection());
 
-  // Listen to hash change events to sync tabs from top-level navbar clicks
+  // Listen to hash change events to sync tabs, and reset tab when entering research page
   useEffect(() => {
     if (!currentSection || currentSection.id !== 'research') return;
 
@@ -1426,8 +1426,13 @@ const SectionPage = () => {
       const hash = window.location.hash.replace('#', '');
       if (['r-d', 'publications', 'patents'].includes(hash)) {
         setActiveSectionId(hash);
+      } else if (!hash) {
+        setActiveSectionId('r-d'); // Default to r-d if no hash
       }
     };
+
+    // Run once when entering the research page to ensure correct tab is selected
+    handleHashChange();
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -1464,12 +1469,14 @@ const SectionPage = () => {
       }
     };
 
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     const matchingChild = currentSection.children.find((c) => {
       const cid = c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const pathEnd = c.path?.split('/').pop();
-      const currentEnd = subPath.split('/').pop();
+      const currentEnd = location.pathname.split('/').pop();
       return (
-        c.path === subPath ||
+        c.path === location.pathname ||
         cid === currentEnd ||
         pathEnd === currentEnd
       );
@@ -1482,6 +1489,8 @@ const SectionPage = () => {
       const defaultId = currentSection.children[0].label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       setActiveSectionId(defaultId);
     }
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [currentSection, location.pathname]);
 
   if (!currentSection) {
@@ -1501,10 +1510,11 @@ const isInnovations = currentSection.id === 'innovations';
 
 const isResearchSection = currentSection.id === 'research';
 
-  // Research alternating: R&D (0)=white, Publications (1)=navy, Patents (2)=white
-  const researchTabIndex = ['r-d', 'publications', 'patents'].indexOf(activeSectionId);
-  const researchIsDark = isResearchSection && researchTabIndex % 2 === 1;
+const isAchievements = currentSection.id === 'achievements';
+const isResearchSection = currentSection.id === 'research';
 
+// Research stays fully in the blue theme for all subheadings
+const researchIsDark = false;
   const activeIndex = Math.max(
     0,
     (currentSection.children || []).findIndex(
@@ -1516,6 +1526,7 @@ const isResearchSection = currentSection.id === 'research';
     (isAboutSection && activeIndex % 2 === 1) || researchIsDark;
 
   const isThemedSection =
+const isThemedSection =
   isAboutSection || isAchievements || isInnovations || isResearchSection;
 
   const pageBg = isAboutSection
@@ -1553,9 +1564,7 @@ const isResearchSection = currentSection.id === 'research';
 
   return (
     <main
-      className={`min-h-screen ${pageBg} ${
-        isThemedSection ? 'pt-20' : 'pt-24'
-      } pb-0`}
+      className={`min-h-screen ${pageBg} pt-24 pb-12`}
     >
 
       {/* ── Custom hero header for About, Achievements & Innovations ── */}
@@ -1566,13 +1575,13 @@ const isResearchSection = currentSection.id === 'research';
       ) : isInnovations ? (
         <InnovationsHero />
       ) : (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/60 mb-3">
+            <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/70 mb-4">
               <Link
                 to="/"
                 className="hover:text-skcet-gold transition-colors"
@@ -1590,7 +1599,7 @@ const isResearchSection = currentSection.id === 'research';
                 isResearchSection
                   ? 'font-oswald font-bold'
                   : 'font-display font-semibold'
-              } text-4xl sm:text-5xl lg:text-6xl ${headingColor} tracking-tight`}
+              } text-4xl sm:text-5xl lg:text-6xl ${headingColor} tracking-tight leading-tight`}
             >
               {currentSection.label}
             </h1>
@@ -1610,7 +1619,7 @@ const isResearchSection = currentSection.id === 'research';
                 : isAchievements
                   ? 'bg-white/95'
                   : isResearchSection
-                    ? 'bg-skcet-navy/95'
+                    ? (researchIsDark ? 'bg-skcet-navy/95' : 'bg-white/95')
                     : 'bg-[#0a0f1d]/90'
             } border-y ${borderMuted} px-4 py-3`}
           >
@@ -1655,6 +1664,7 @@ const isResearchSection = currentSection.id === 'research';
           );
           const isAch = currentSection.id === 'achievements';
           const isInno = currentSection.id === 'innovations';
+          const isAbout = currentSection.id === 'about';
           const activeChild = currentSection.children[activeIndex];
           const anchorId = activeChild?.label.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '';
           const pathEnd = activeChild?.path?.split('/').pop();
@@ -1917,7 +1927,7 @@ const isResearchSection = currentSection.id === 'research';
       ) : (
         /* ── Other sections: original layout ── */
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start gap-12 lg:gap-16 relative pb-24">
-          <aside className="hidden lg:block lg:w-56 flex-shrink-0 sticky top-28 self-start z-20">
+          <aside className="hidden lg:block lg:w-56 flex-shrink-0 sticky top-36 self-start z-20">
             {currentSection.children && currentSection.children.length > 0 ? (
               <nav aria-label="Section topics">
                 <ul className="relative flex flex-col">
@@ -1953,8 +1963,8 @@ const isResearchSection = currentSection.id === 'research';
                               className={`
                                 block text-[15px] leading-snug transition-all duration-300
                                 ${isActive
-                                  ? `${isResearchSection ? 'font-google-sans font-bold' : 'font-display font-semibold'} text-skcet-gold`
-                                  : `${isResearchSection ? 'font-google-sans font-semibold' : 'font-medium'} ${mutedText} hover:${headingColor.split(' ')[0]}`}
+                                  ? `${isResearchSection ? 'font-sans font-bold' : 'font-display font-semibold'} text-skcet-gold`
+                                  : `${isResearchSection ? 'font-sans font-semibold' : 'font-medium'} ${mutedText} hover:${headingColor.split(' ')[0]}`}
                               `}
                             >
                               {child.label}
@@ -1972,13 +1982,14 @@ const isResearchSection = currentSection.id === 'research';
           </aside>
 
           <div className="flex-1 min-w-0 pb-32">
-            {isResearchSection ? (
-              <div className="w-full">
-                {activeSectionId === 'r-d' && <ResearchProjects />}
-                {activeSectionId === 'publications' && <Publications />}
-                {activeSectionId === 'patents' && <Patents />}
-              </div>
-            ) : currentSection.children && currentSection.children.length > 0 ? (
+      {isResearchSection ? (
+        <div className="w-full">
+          {activeSectionId === 'r-d' && <ResearchProjects isDark={researchIsDark} />}
+          {activeSectionId === 'publications' && <Publications isDark={researchIsDark} />}
+          {activeSectionId === 'patents' && <Patents isDark={researchIsDark} />}
+        </div>
+      ) : currentSection.children && currentSection.children.length > 0 ? (
+            
               <div className="space-y-24">
                 {currentSection.children.map((child, index) => {
                   const anchorId = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');

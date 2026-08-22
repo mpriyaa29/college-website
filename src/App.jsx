@@ -5,18 +5,19 @@ import Footer from './components/Footer/Footer';
 
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
-import Home from './pages/Home/Home';
-import SectionPage from './pages/SectionPage/SectionPage';
 
 import DepartmentAchievementPage from './pages/DepartmentAchievementPage/DepartmentAchievementPage';
-
 import HighlightDetail from './pages/HighlightDetail/HighlightDetail';
 import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
 import Documents from './pages/Documents/Documents';
+import Exams from './pages/Exams/Exams';
+import Admissions from './pages/Admissions/Admissions';
 
 import Placeholder from './pages/Placeholder/Placeholder';
-
+import Accreditations from './pages/Accreditations/Accreditations';
+import Placements from './pages/Placements/Placements';
 import { NAV_ITEMS } from './data/navigation';
+
 
 /**
  * App
@@ -36,6 +37,10 @@ const App = () => {
       <Routes>
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
+
+{/* ── Custom Pages ── */}
+<Route path="/accreditations/*" element={<Accreditations />} />
+<Route path="/placements/*" element={<Placements />} />
 
 {/* ── Department Achievement Details Page ── */}
 <Route
@@ -61,20 +66,36 @@ const App = () => {
   element={<Documents />}
 />
 
-        {/* ── Dynamic Section Pages ── */}
-        {NAV_ITEMS
-          .filter(
-            (item) =>
-              item.id !== 'online-payment' &&
-              item.id !== 'documents'
-          )
-          .map((item) => (
-            <Route
-              key={item.id}
-              path={`${item.path}/*`}
-              element={<SectionPage />}
-            />
-          ))}
+{/* ── Dedicated Autonomous Examination Portal ── */}
+<Route
+  path="/exams/*"
+  element={<Exams />}
+/>
+
+{/* ── Dedicated Admissions Portal ── */}
+<Route
+  path="/admissions/*"
+  element={<Admissions />}
+/>
+
+{/* ── Dynamic Section Pages ── */}
+{NAV_ITEMS
+  .filter(
+    (item) =>
+      item.id !== 'accreditations' &&
+      item.id !== 'placements' &&
+      item.id !== 'online-payment' &&
+      item.id !== 'documents' &&
+      item.id !== 'exams' &&
+      item.id !== 'admissions'
+  )
+  .map((item) => (
+    <Route
+      key={item.id}
+      path={`${item.path}/*`}
+      element={<SectionPage />}
+    />
+  ))}
 
         {/* ── 404 catch-all ── */}
         <Route path="*" element={<Placeholder />} />
