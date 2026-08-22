@@ -1,11 +1,22 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
+
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
+
+import DepartmentAchievementPage from './pages/DepartmentAchievementPage/DepartmentAchievementPage';
+import HighlightDetail from './pages/HighlightDetail/HighlightDetail';
+import OnlinePayment from './pages/OnlinePayment/OnlinePayment';
+import Documents from './pages/Documents/Documents';
+import Exams from './pages/Exams/Exams';
+import Admissions from './pages/Admissions/Admissions';
+
 import Placeholder from './pages/Placeholder/Placeholder';
 import Accreditations from './pages/Accreditations/Accreditations';
 import Placements from './pages/Placements/Placements';
+import { NAV_ITEMS } from './data/navigation';
 import { NAV_ITEMS } from './data/navigation';
 
 /**
@@ -16,6 +27,7 @@ import { NAV_ITEMS } from './data/navigation';
  * – Routes handle page-level rendering
  * ──────────────────────────────────────────────────────────────────
  */
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -26,14 +38,64 @@ const App = () => {
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
 
-        {/* ── Custom Pages ── */}
-        <Route path="/accreditations/*" element={<Accreditations />} />
-        <Route path="/placements/*" element={<Placements />} />
+{/* ── Custom Pages ── */}
+<Route path="/accreditations/*" element={<Accreditations />} />
+<Route path="/placements/*" element={<Placements />} />
 
-        {/* ── Dynamic Section Pages ── */}
-        {NAV_ITEMS.filter(item => item.id !== 'accreditations' && item.id !== 'placements').map((item) => (
-          <Route key={item.id} path={`${item.path}/*`} element={<SectionPage />} />
-        ))}
+{/* ── Department Achievement Details Page ── */}
+<Route
+  path="/achievements/department-achievements/:deptId"
+  element={<DepartmentAchievementPage />}
+/>
+
+{/* ── Highlight Details Page ── */}
+<Route
+  path="/highlights/:id"
+  element={<HighlightDetail />}
+/>
+
+{/* ── Dedicated Online Fee Payment Portal ── */}
+<Route
+  path="/online-payment/*"
+  element={<OnlinePayment />}
+/>
+
+{/* ── Dedicated Document Request & Tracking Service ── */}
+<Route
+  path="/documents/*"
+  element={<Documents />}
+/>
+
+{/* ── Dedicated Autonomous Examination Portal ── */}
+<Route
+  path="/exams/*"
+  element={<Exams />}
+/>
+
+{/* ── Dedicated Admissions Portal ── */}
+<Route
+  path="/admissions/*"
+  element={<Admissions />}
+/>
+
+{/* ── Dynamic Section Pages ── */}
+{NAV_ITEMS
+  .filter(
+    (item) =>
+      item.id !== 'accreditations' &&
+      item.id !== 'placements' &&
+      item.id !== 'online-payment' &&
+      item.id !== 'documents' &&
+      item.id !== 'exams' &&
+      item.id !== 'admissions'
+  )
+  .map((item) => (
+    <Route
+      key={item.id}
+      path={`${item.path}/*`}
+      element={<SectionPage />}
+    />
+  ))}
 
         {/* ── 404 catch-all ── */}
         <Route path="*" element={<Placeholder />} />
