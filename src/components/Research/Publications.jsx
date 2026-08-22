@@ -2,20 +2,28 @@ import { publications } from '../../data/researchData';
 import { Download, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Publications() {
+export default function Publications({ isDark = false }) {
+  const t = {
+    heading: isDark ? 'text-white' : 'text-skcet-navy',
+    text: isDark ? 'text-white/90 group-hover:text-white' : 'text-black/80 group-hover:text-skcet-navy',
+    muted: isDark ? 'text-white/40' : 'text-skcet-navy/55',
+    border: isDark ? 'border-white/10' : 'border-skcet-navy/10',
+    divide: isDark ? 'divide-white/10' : 'divide-skcet-navy/10',
+    bullet: isDark ? 'bg-white/10' : 'bg-skcet-navy/10',
+  };
   return (
     <div className="max-w-4xl mx-auto pb-24">
       <div className="mb-10">
         <h2 className="text-xs uppercase tracking-widest text-skcet-gold font-bold mb-2">
           Repository
         </h2>
-        <h1 className="font-sans text-2xl sm:text-3xl text-white font-bold tracking-tight">
+        <h1 className={`font-sans text-2xl sm:text-3xl ${t.heading} font-bold tracking-tight`}>
           Research Publications
         </h1>
         <div className="w-12 h-0.5 bg-skcet-gold mt-4 rounded-full" />
       </div>
 
-      <div className="divide-y divide-white/10">
+      <div className={`divide-y ${t.divide}`}>
         {publications.map((pub, index) => {
           const num = String(pub.id).padStart(2, '0');
           return (
@@ -34,13 +42,13 @@ export default function Publications() {
                 </span>
                 
                 <div className="space-y-2 min-w-0">
-                  <h3 className="font-sans text-lg sm:text-xl font-bold leading-snug text-white/90 group-hover:text-white transition-colors tracking-wide">
+                  <h3 className={`font-sans text-lg sm:text-xl font-bold leading-snug transition-colors tracking-wide ${t.text}`}>
                     {pub.title}
                   </h3>
                   
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/40 font-medium">
+                  <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium ${t.muted}`}>
                     <span>{pub.type}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/10 hidden sm:inline" />
+                    <span className={`w-1.5 h-1.5 rounded-full ${t.bullet} hidden sm:inline`} />
                     <span>Published: {pub.year}</span>
                   </div>
                 </div>

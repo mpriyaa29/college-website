@@ -988,7 +988,7 @@ const isAchievements = currentSection.id === 'achievements';
 const isResearchSection = currentSection.id === 'research';
 
 // Research stays fully in the blue theme for all subheadings
-const researchIsDark = isResearchSection;
+const researchIsDark = false;
   const activeIndex = Math.max(
     0,
     (currentSection.children || []).findIndex(
@@ -1090,7 +1090,7 @@ const researchIsDark = isResearchSection;
                 : isAchievements
                   ? 'bg-white/95'
                   : isResearchSection
-                    ? 'bg-skcet-navy/95'
+                    ? (researchIsDark ? 'bg-skcet-navy/95' : 'bg-white/95')
                     : 'bg-[#0a0f1d]/90'
             } border-y ${borderMuted} px-4 py-3`}
           >
@@ -1434,9 +1434,9 @@ const researchIsDark = isResearchSection;
           <div className="flex-1 min-w-0 pb-32">
       {isResearchSection ? (
         <div className="w-full">
-          {activeSectionId === 'r-d' && <ResearchProjects />}
-          {activeSectionId === 'publications' && <Publications />}
-          {activeSectionId === 'patents' && <Patents />}
+          {activeSectionId === 'r-d' && <ResearchProjects isDark={researchIsDark} />}
+          {activeSectionId === 'publications' && <Publications isDark={researchIsDark} />}
+          {activeSectionId === 'patents' && <Patents isDark={researchIsDark} />}
         </div>
       ) : currentSection.children && currentSection.children.length > 0 ? (
             

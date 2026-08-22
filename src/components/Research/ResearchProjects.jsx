@@ -2,9 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { researchProjects } from '../../data/researchData';
 import { motion } from 'framer-motion';
 
-export default function ResearchProjects() {
+export default function ResearchProjects({ isDark = false }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const rowRefs = useRef([]);
+
+  const t = {
+    heading: isDark ? 'text-white' : 'text-skcet-navy',
+    text: isDark ? 'text-white/80' : 'text-black/80',
+    muted: isDark ? 'text-white/40' : 'text-skcet-navy/50',
+    border: isDark ? 'border-white/10' : 'border-skcet-navy/10',
+  };
 
   const setRowRef = (index, el) => {
     rowRefs.current[index] = el;
@@ -121,7 +128,7 @@ export default function ResearchProjects() {
               ref={(el) => setRowRef(index, el)}
               key={project.id}
               onClick={() => scrollToProject(index)}
-              className={`scroll-mt-32 py-8 sm:py-10 border-b border-white/10 last:border-b-0 transition-all duration-300 cursor-pointer ${
+              className={`scroll-mt-32 py-8 sm:py-10 border-b ${t.border} last:border-b-0 transition-all duration-300 cursor-pointer ${
                 isActive ? 'opacity-100' : 'opacity-40 hover:opacity-75'
               }`}
               initial={{ opacity: 0, y: 20 }}
@@ -168,17 +175,17 @@ export default function ResearchProjects() {
                 <div className="flex-1 space-y-3">
                   <h3
                     className={`font-sans text-xl sm:text-2xl font-bold leading-snug tracking-wide transition-colors duration-300 ${
-                      isActive ? 'text-white' : 'text-white/80'
+                      isActive ? t.heading : t.text
                     }`}
                   >
                     {project.name}
                   </h3>
                     
                   <div className="flex flex-col gap-1">
-                    <span className="text-[10px] uppercase tracking-[0.28em] text-white/40 font-semibold">
+                    <span className={`text-[10px] uppercase tracking-[0.28em] font-semibold ${t.muted}`}>
                       Lead Investigator
                     </span>
-                    <span className="text-sm font-medium text-white/80">
+                    <span className={`text-sm font-medium ${t.text}`}>
                       {project.faculty}
                     </span>
                   </div>

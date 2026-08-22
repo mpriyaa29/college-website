@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MapPin, Phone, Mail, Globe, ArrowUp, Award } from 'lucide-react';
 
 const SISTER_INSTITUTIONS = [
@@ -38,6 +38,9 @@ const SITEMAP_COL_2 = [
 ];
 
 const Footer = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -48,31 +51,33 @@ const Footer = () => {
   return (
     <>
       {/* ── 25 Years Milestone Full-Width Celebration Banner (Right Above Yellow Sister Institutions Bar) ── */}
-      <section aria-label="25 Years of SKCET Milestone" className="w-full relative overflow-hidden bg-white p-0 m-0 leading-none">
-        <div className="relative w-full overflow-hidden flex items-center justify-center">
-          <img
-            src="/images/skcet-25-years-footer-banner.png"
-            alt="SKCET 25 Years - Transforming Lives to Legacies"
-            className="w-full h-auto min-w-full block object-cover sm:object-fill lg:object-cover"
-            style={{
-              maskImage: 'radial-gradient(ellipse 92% 82% at 50% 50%, black 50%, rgba(0,0,0,0.6) 78%, transparent 100%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 92% 82% at 50% 50%, black 50%, rgba(0,0,0,0.6) 78%, transparent 100%)',
-            }}
-          />
-          {/* Radial perimeter soft smudge overlay */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background: 'radial-gradient(ellipse 92% 82% at 50% 50%, transparent 48%, rgba(255,255,255,0.7) 78%, #ffffff 100%)',
-            }}
-          />
-          {/* 4-Directional edge smudge overlays to blend all borders seamlessly */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-b from-white via-white/70 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 sm:h-16 bg-gradient-to-t from-white via-white/60 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-white via-white/70 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-white via-white/70 to-transparent" />
-        </div>
-      </section>
+      {isHomePage && (
+        <section aria-label="25 Years of SKCET Milestone" className="w-full relative overflow-hidden bg-white p-0 m-0 leading-none">
+          <div className="relative w-full overflow-hidden flex items-center justify-center">
+            <img
+              src="/images/skcet-25-years-footer-banner.png"
+              alt="SKCET 25 Years - Transforming Lives to Legacies"
+              className="w-full h-auto min-w-full block object-cover sm:object-fill lg:object-cover"
+              style={{
+                maskImage: 'radial-gradient(ellipse 92% 82% at 50% 50%, black 50%, rgba(0,0,0,0.6) 78%, transparent 100%)',
+                WebkitMaskImage: 'radial-gradient(ellipse 92% 82% at 50% 50%, black 50%, rgba(0,0,0,0.6) 78%, transparent 100%)',
+              }}
+            />
+            {/* Radial perimeter soft smudge overlay */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background: 'radial-gradient(ellipse 92% 82% at 50% 50%, transparent 48%, rgba(255,255,255,0.7) 78%, #ffffff 100%)',
+              }}
+            />
+            {/* 4-Directional edge smudge overlays to blend all borders seamlessly */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-b from-white via-white/70 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 sm:h-16 bg-gradient-to-t from-white via-white/60 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-white via-white/70 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-white via-white/70 to-transparent" />
+          </div>
+        </section>
+      )}
 
       <footer className="w-full bg-[#080e1c] text-white">
         

@@ -21,7 +21,7 @@ const Hero = () => {
       <VideoBackground />
 
       {/* ── Hero content — centred vertically, full width ── */}
-      <div className="relative z-10 flex flex-1 items-center justify-center pt-20 pb-28 w-full">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-between pt-24 pb-4 w-full">
         <HeroContent />
       </div>
 
