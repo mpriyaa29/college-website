@@ -8,3 +8,12 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+// Remove the pre-React hero shell once React has mounted.
+// The shell showed the hero poster while JS was loading —
+// React's VideoBackground renders the identical poster,
+// so removing the shell is visually seamless.
+const shell = document.getElementById('hero-shell')
+if (shell) {
+  shell.remove()
+}

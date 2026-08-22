@@ -101,11 +101,9 @@ export const NAV_ITEMS = [
     label: 'Research',
     path: '/research',
     children: [
-      { label: 'R&D',              path: '/research/rd' },
-      { label: 'Publications',     path: '/research/publications' },
-      { label: 'Patents',          path: '/research/patents' },
-      { label: 'Research Centres', path: '/research/centres' },
-      { label: 'Research Projects', path: '/research/projects' },
+      { label: 'R&D',              path: '/research#r-d' },
+      { label: 'Publications',     path: '/research#publications' },
+      { label: 'Patents',          path: '/research#patents' },
     ],
   },
   {

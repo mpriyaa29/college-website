@@ -9,9 +9,6 @@ import { motion } from 'framer-motion';
  * ──────────────────────────────────────────────────────────────────
  */
 
-const LOGO_URL =
-  'https://skcet.ac.in/wp-content/uploads/2024/08/skcet-logo.png';
-
 /* ── Framer Motion variants ─────────────────────────────────────── */
 const containerVariants = {
   hidden: {},
@@ -25,14 +22,6 @@ const fadeUp = {
   visible: {
     opacity: 1, y: 0,
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-const logoVariant = {
-  hidden:  { opacity: 0, scale: 0.88, y: 10 },
-  visible: {
-    opacity: 1, scale: 1, y: 0,
-    transition: { duration: 1, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -89,7 +78,8 @@ const HeroContent = () => {
             src="/images/accreditations.png" 
             alt="NAAC, NBA, NIRF, Ministry of Education Rankings" 
             className="h-10 sm:h-14 w-auto object-contain"
-            loading="lazy"
+            loading="eager"
+            fetchpriority="high"
           />
         </div>
 
@@ -107,7 +97,8 @@ const HeroContent = () => {
               group-hover:scale-[1.02] transition-transform duration-400
               bg-white
             "
-            loading="lazy"
+            loading="eager"
+            fetchpriority="high"
           />
         </a>
       </motion.div>

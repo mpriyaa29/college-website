@@ -7,16 +7,131 @@
     <meta name="description" content="Sri Krishna College of Engineering and Technology — An autonomous institution affiliated with Anna University, Coimbatore." />
     <meta name="theme-color" content="#1a2744" />
     <title>SKCET — Sri Krishna College of Engineering and Technology</title>
-    <!-- Google Fonts: Inter + Playfair Display -->
+
+    <!-- Google Fonts: Inter + Playfair Display + Google Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Hammersmith+One&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
-      rel="stylesheet"
-    />
+  <link
+  href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Google+Sans:wght@400;500;700&family=Google+Sans+Display&family=Hammersmith+One&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+  rel="stylesheet"
+/>
+
+    <!--
+      ═══════════════════════════════════════════════════════════════
+      HERO ASSET PRELOADS
+      ───────────────────────────────────────────────────────────────
+      These fire at the very top of the network waterfall, before
+      any JavaScript, before React boots, before anything else.
+
+      Priority hierarchy:
+        hero-poster.webp  → HIGH  (needed in < 1 render frame)
+        skcet-logo.png    → HIGH  (first branded image in hero)
+        skcet-campus.mp4  → AUTO  (large file; let JS load first,
+                                   then buffer the video in bg)
+      ═══════════════════════════════════════════════════════════════
+    -->
+    <!-- Poster: above-the-fold background — must appear instantly -->
+    <link rel="preload" as="image" href="/images/hero-poster.webp" fetchpriority="high" />
+    <!-- SKCET logo: first branded asset seen in the hero -->
+    <link rel="preload" as="image" href="https://skcet.ac.in/wp-content/uploads/2024/08/skcet-logo.png" fetchpriority="high" crossorigin />
+    <!-- Hero video: large file — do NOT compete with JS bundles for bandwidth.
+         Let React boot first, then the video buffers in the background. -->
+    <link rel="preload" as="video" href="/videos/skcet-campus.mp4" type="video/mp4" fetchpriority="auto" />
+
+    <!--
+      ═══════════════════════════════════════════════════════════════
+      CRITICAL INLINE STYLES — Hero shell before React mounts
+      ───────────────────────────────────────────────────────────────
+      These styles render the poster the moment the browser receives
+      the HTML — zero dependency on JavaScript or React.
+      ═══════════════════════════════════════════════════════════════
+    -->
+    <style>
+      /* Reset */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        background-color: #0d1529;
+        overflow-x: clip;
+      }
+
+      /* Full-screen hero shell — matches .hero-section in index.css */
+      #hero-shell {
+        position: relative;
+        width: 100vw;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background-color: #0a1228;
+      }
+
+      /* Poster layer — identical positioning to VideoBackground's poster div */
+      #hero-shell-poster {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/images/hero-poster.webp');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      /* Cinematic overlay — matches .hero-overlay in index.css */
+      #hero-shell-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(10, 18, 40, 0.7) 0%,
+          rgba(10, 18, 40, 0.45) 40%,
+          rgba(10, 18, 40, 0.55) 70%,
+          rgba(10, 18, 40, 0.85) 100%
+        );
+      }
+
+
+      /* Vignette — matches VideoBackground's vignette div */
+      #hero-shell-vignette {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 40%, rgba(10,18,40,0.5) 100%);
+      }
+
+      /*
+        The shell is removed programmatically in main.jsx as soon as
+        React mounts. No CSS selector needed for dismissal.
+      */
+    </style>
   </head>
   <body>
+    <!--
+      ═══════════════════════════════════════════════════════════════
+      INSTANT HERO SHELL
+      ───────────────────────────────────────────────────────────────
+      Renders the hero poster the moment the browser receives this
+      HTML — no JavaScript required. The user sees the background
+      image immediately, even on the slowest connections.
+
+      React mounts into #root and the VideoBackground component
+      renders the identical poster + overlay, so when React takes
+      over there is zero visual difference and no layout shift.
+
+      Once React has mounted (#root is no longer empty), the shell
+      is hidden via the CSS rule above.
+      ═══════════════════════════════════════════════════════════════
+    -->
+    <div id="hero-shell" aria-hidden="true">
+      <div id="hero-shell-poster"></div>
+      <div id="hero-shell-overlay"></div>
+      <div id="hero-shell-vignette"></div>
+    </div>
+
+    <!-- React root -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
+
