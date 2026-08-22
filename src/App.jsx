@@ -4,6 +4,8 @@ import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
 import Placeholder from './pages/Placeholder/Placeholder';
+import Accreditations from './pages/Accreditations/Accreditations';
+import Placements from './pages/Placements/Placements';
 import { NAV_ITEMS } from './data/navigation';
 
 /**
@@ -24,8 +26,12 @@ const App = () => {
         {/* ── Home / Landing Page ── */}
         <Route path="/" element={<Home />} />
 
+        {/* ── Custom Pages ── */}
+        <Route path="/accreditations/*" element={<Accreditations />} />
+        <Route path="/placements/*" element={<Placements />} />
+
         {/* ── Dynamic Section Pages ── */}
-        {NAV_ITEMS.map((item) => (
+        {NAV_ITEMS.filter(item => item.id !== 'accreditations' && item.id !== 'placements').map((item) => (
           <Route key={item.id} path={`${item.path}/*`} element={<SectionPage />} />
         ))}
 
