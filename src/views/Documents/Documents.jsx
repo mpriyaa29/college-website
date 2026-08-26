@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
   FileText,
   FileCheck,
@@ -46,6 +47,15 @@ const iconMap = {
 const CATEGORIES = ['All', 'Academic', 'Certificates', 'Recommendations', 'Administrative', 'Verification'];
 
 const Documents = () => {
+  const { scrollY } = useScroll();
+  const [imgSrc, setImgSrc] = useState('/images/documents-header.jpg');
+
+  const y = useTransform(scrollY, [0, 400], [0, 120]);
+  const scale = useTransform(scrollY, [0, 400], [1, 1.08]);
+  const imageOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textY = useTransform(scrollY, [0, 200], [0, -30]);
+
   // Catalog Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('All');
@@ -396,12 +406,59 @@ const Documents = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[#f8f9fa] pt-32 sm:pt-36 lg:pt-40 pb-20 text-gray-800">
-      
+    <main className="min-h-screen bg-[#f8f9fa] pt-0 pb-20 text-gray-800">
+
+      {/* ── Dynamic Hero Header for Documents ── */}
+      <div className="relative w-full h-[200px] sm:h-[240px] md:h-[270px] lg:h-[300px] overflow-hidden bg-skcet-dark flex items-center justify-center">
+        <motion.div 
+          style={{ y, scale, opacity: imageOpacity }}
+          className="absolute inset-0 w-full h-full"
+        >
+          <img
+            src={imgSrc}
+            alt="Documents Campus"
+            className="w-full h-full object-cover"
+            loading="eager"
+            onError={() => {
+              if (imgSrc !== '/images/hero-poster.webp') {
+                setImgSrc('/images/hero-poster.webp');
+              }
+            }}
+          />
+          <div className="absolute inset-0 bg-skcet-navy/70 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-b from-skcet-navy/30 via-skcet-navy/50 to-skcet-navy/80" />
+        </motion.div>
+
+        <motion.div 
+          style={{ opacity: textOpacity, y: textY }}
+          className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center justify-center h-full pt-16 sm:pt-20 lg:pt-24"
+        >
+          <div className="flex items-center gap-2 text-[9px] sm:text-xs font-light uppercase tracking-[0.2em] text-skcet-gold/90 mb-2">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span className="opacity-50">/</span>
+            <span className="text-white font-normal">Documents</span>
+          </div>
+
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-tight mb-3 drop-shadow-md">
+            Document Services
+          </h1>
+          
+          <div className="w-12 h-[1px] bg-skcet-gold/60 rounded-full mb-3 shadow-sm" />
+
+          <p className="text-skcet-gold/90 font-light text-[10px] sm:text-xs flex items-center justify-center gap-2 flex-wrap tracking-wide drop-shadow-sm">
+            <span>28+ Years of Excellence</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+            <span>NAAC A++ Grade</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+            <span>NIRF Rank 100</span>
+          </p>
+        </motion.div>
+      </div>
+
       {/* ───────────────────────────────────────────────────────────────────────
           1. PAGE INTRODUCTION
          ─────────────────────────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-5">
           <div className="flex items-start gap-3.5">
             <div className="w-11 h-11 rounded-xl bg-skcet-navy text-amber-400 flex items-center justify-center flex-shrink-0 shadow-xs">
@@ -411,9 +468,9 @@ const Documents = () => {
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-700 mb-0.5">
                 <ShieldCheck size={14} /> Student Records & Certification Cell
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-skcet-navy tracking-tight">
-                Document Services
-              </h1>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-skcet-navy tracking-tight">
+                Academic & Student Records
+              </h2>
               <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-2xl leading-relaxed">
                 Apply for official college documents digitally and track your request from submission to delivery.
               </p>

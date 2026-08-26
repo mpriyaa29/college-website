@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { NAV_ITEMS } from '../../data/navigation';
 import ABOUT_CONTENT from '../../data/aboutContent';
 import ACHIEVEMENTS_CONTENT from '../../data/achievementsContent';
@@ -815,6 +815,12 @@ const ABOUT_ICONS = {
   'csr':          <HeartHandshake size={18} />,
 };
 
+const RESEARCH_ICONS = {
+  'r-d':          <Globe size={18} />,
+  'publications': <BookOpen size={18} />,
+  'patents':      <Lightbulb size={18} />,
+};
+
 /* ─── Innovations: Innovation Initiatives ─── */
 const InnovationInitiativesContent = ({ data, isDark = false }) => {
   const t = themeClasses(isDark);
@@ -1302,93 +1308,100 @@ const InnovationsHero = () => (
   </div>
 );
 
-const AboutHero = () => (
-  <div className="bg-white border-b border-skcet-navy/8">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/70 mb-3">
-            <Link href="/" className="hover:text-skcet-gold transition-colors">Home</Link>
-            <span className="opacity-50">/</span>
-            <span className="text-skcet-gold font-semibold">About</span>
-          </div>
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-skcet-navy font-bold tracking-tight leading-none mb-3">
-            About
-          </h1>
-          <div className="w-16 h-1 bg-skcet-gold rounded-full mb-3" />
-          <p className="text-skcet-gold font-medium text-xs sm:text-sm flex items-center gap-2 flex-wrap">
-            <span>28+ Years of Excellence</span>
-            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
-            <span>NAAC A++ Grade</span>
-            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
-            <span>NIRF Rank 100</span>
-          </p>
+const SectionHeroHeader = ({ scrollY, activeChildLabel, sectionLabel, sectionId }) => {
+  const primarySrc = `/images/${sectionId}-header.jpg`;
+  const [imgSrc, setImgSrc] = useState(primarySrc);
+
+  // Sync state if sectionId changes
+  useEffect(() => {
+    setImgSrc(`/images/${sectionId}-header.jpg`);
+  }, [sectionId]);
+
+  // Parallax translation for the background image
+  const y = useTransform(scrollY, [0, 400], [0, 120]);
+  // Scale translation
+  const scale = useTransform(scrollY, [0, 400], [1, 1.08]);
+  // Image opacity fade-out
+  const imageOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  // Opacity for the text overlay content
+  const textOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textY = useTransform(scrollY, [0, 200], [0, -30]);
+
+  // Determine section-specific fallback images that already exist
+  const getFallbackSrc = () => {
+    if (sectionId === 'achievements') {
+      return '/images/achievements-hero.jpg.webp';
+    }
+    return '/images/hero-poster.webp';
+  };
+
+  return (
+    <div className="relative w-full h-[200px] sm:h-[240px] md:h-[270px] lg:h-[300px] overflow-hidden bg-skcet-dark flex items-center justify-center">
+      {/* Background Image Container */}
+      <motion.div 
+        style={{ y, scale, opacity: imageOpacity }}
+        className="absolute inset-0 w-full h-full"
+      >
+        <img
+          src={imgSrc}
+          alt={`${sectionLabel || 'SKCET'} Campus`}
+          className="w-full h-full object-cover"
+          loading="eager"
+          onError={() => {
+            const fallback = getFallbackSrc();
+            if (imgSrc !== fallback) {
+              setImgSrc(fallback);
+            } else if (imgSrc !== '/images/hero-poster.webp') {
+              setImgSrc('/images/hero-poster.webp');
+            }
+          }}
+        />
+        {/* Dark Blue Overlay */}
+        <div className="absolute inset-0 bg-skcet-navy/70 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-b from-skcet-navy/30 via-skcet-navy/50 to-skcet-navy/80" />
+      </motion.div>
+
+      {/* Centered Title overlay */}
+      <motion.div 
+        style={{ opacity: textOpacity, y: textY }}
+        className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center justify-center h-full pt-16 sm:pt-20 lg:pt-24"
+      >
+        {/* Breadcrumbs */}
+        <div className="flex items-center gap-2 text-[9px] sm:text-xs font-light uppercase tracking-[0.2em] text-skcet-gold/90 mb-2">
+          <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          <span className="opacity-50">/</span>
+          {sectionLabel && (
+            <>
+              <span className={activeChildLabel && activeChildLabel.toLowerCase() !== sectionLabel.toLowerCase() ? "opacity-50" : "text-white font-normal"}>{sectionLabel}</span>
+            </>
+          )}
+          {activeChildLabel && activeChildLabel.toLowerCase() !== (sectionLabel || '').toLowerCase() && (
+            <>
+              <span className="opacity-50">/</span>
+              <span className="text-white font-normal">{activeChildLabel}</span>
+            </>
+          )}
         </div>
-        <p className="text-skcet-navy/55 text-sm max-w-md italic font-light border-l-2 border-skcet-gold/40 pl-4 py-1">
-          “ At SKCET, we don't just educate — we inspire innovation, nurture talent and build leaders for a better tomorrow. ”
+
+        {/* Title */}
+        <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-tight mb-3 drop-shadow-md">
+          {activeChildLabel || sectionLabel || "Institution"}
+        </h1>
+        
+        <div className="w-12 h-[1px] bg-skcet-gold/60 rounded-full mb-3 shadow-sm" />
+
+        {/* Sub-badges row */}
+        <p className="text-skcet-gold/90 font-light text-[10px] sm:text-xs flex items-center justify-center gap-2 flex-wrap tracking-wide drop-shadow-sm">
+          <span>28+ Years of Excellence</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+          <span>NAAC A++ Grade</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+          <span>NIRF Rank 100</span>
         </p>
-      </div>
+      </motion.div>
     </div>
-  </div>
-);
-
-const AchievementsHero = () => (
-  <div className="relative bg-white border-b border-skcet-navy/8 overflow-hidden">
-    {/* Right: full-bleed blended image */}
-    <div
-      className="hidden lg:block absolute inset-y-0 right-0 w-[46%] h-full pointer-events-none"
-      style={{
-        maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 15%, black 40%)',
-        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 15%, black 40%)',
-      }}
-    >
-      <img
-        src="/images/achievements-hero.jpg.webp"
-        onError={(e) => {
-          if (e.currentTarget.src.endsWith('.jpg.webp')) {
-            e.currentTarget.src = "/images/achievements-hero.jpg";
-          } else if (e.currentTarget.src.endsWith('.jpg')) {
-            e.currentTarget.src = "/images/achievements-hero.png";
-          } else if (e.currentTarget.src.endsWith('.png')) {
-            e.currentTarget.src = "/images/achievements-hero.webp";
-          } else {
-            e.currentTarget.src = "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80";
-          }
-        }}
-        alt="SKCET Campus Achievements"
-        className="w-full h-full object-cover object-center"
-      />
-    </div>
-
-    {/* Content */}
-    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col lg:flex-row items-stretch min-h-[240px] lg:min-h-[280px]">
-        <div className="flex-1 flex flex-col justify-center py-10 lg:py-12 pr-0 lg:pr-12 max-w-xl">
-          <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/70 mb-4">
-            <Link href="/" className="hover:text-skcet-gold transition-colors">Home</Link>
-            <span className="opacity-50">/</span>
-            <span className="text-skcet-gold font-semibold">Achievements</span>
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-skcet-navy font-bold tracking-tight leading-none mb-3">
-            Achievements
-          </h1>
-
-          <p className="text-skcet-gold font-medium text-sm sm:text-base mb-3 flex items-center gap-2 flex-wrap">
-            <span>Celebrating Excellence</span>
-            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
-            <span>Recognizing Progress</span>
-            <span className="w-1 h-1 rounded-full bg-skcet-gold inline-block" />
-            <span>Inspiring Tomorrow</span>
-          </p>
-          <p className="text-skcet-navy/55 font-light leading-relaxed text-sm sm:text-base">
-            A journey of innovation, dedication and success — showcasing the remarkable milestones of SKCET.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 /**
  * SectionPage
@@ -1422,6 +1435,17 @@ const SectionPage = () => {
   };
 
   const [activeSectionId, setActiveSectionId] = useState(getInitialActiveSection());
+
+  const activeChild = currentSection?.children?.find(
+    (c) => c.label.toLowerCase().replace(/[^a-z0-9]+/g, '-') === activeSectionId
+  ) || currentSection?.children?.[0];
+
+  const { scrollY } = useScroll();
+  const sidebarOpacity = useTransform(scrollY, [150, 350], [0, 1]);
+  const sidebarTranslateY = useTransform(scrollY, [150, 350], [40, 0]);
+
+  const mobileNavOpacity = useTransform(scrollY, [150, 350], [0, 1]);
+  const mobileNavTranslateY = useTransform(scrollY, [150, 350], [20, 0]);
 
   // Listen to hash change events to sync tabs, and reset tab when entering research page
   useEffect(() => {
@@ -1568,50 +1592,16 @@ const isThemedSection =
 
   return (
     <main
-      className={`min-h-screen ${pageBg} pt-24 pb-12`}
+      className={`min-h-screen ${pageBg} pt-0 pb-12`}
     >
 
-      {/* ── Custom hero header for About, Achievements & Innovations ── */}
-      {isAchievements ? (
-        <AchievementsHero />
-      ) : isAboutSection ? (
-        <AboutHero />
-      ) : isInnovations ? (
-        <InnovationsHero />
-      ) : (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center gap-2 text-xs font-light uppercase tracking-widest text-skcet-gold/70 mb-4">
-              <Link
-                href="/"
-                className="hover:text-skcet-gold transition-colors"
-              >
-                Home
-              </Link>
-              <span>/</span>
-              <span className="text-skcet-gold">
-                {currentSection.label}
-              </span>
-            </div>
-
-            <h1
-              className={`${
-                isResearchSection
-                  ? 'font-oswald font-bold'
-                  : 'font-display font-semibold'
-              } text-4xl sm:text-5xl lg:text-6xl ${headingColor} tracking-tight leading-tight`}
-            >
-              {currentSection.label}
-            </h1>
-
-            <div className="w-16 h-1 bg-skcet-gold mt-6 rounded-full" />
-          </motion.div>
-        </div>
-      )}
+      {/* ── Dynamic Hero Header for all sections ── */}
+      <SectionHeroHeader
+        scrollY={scrollY}
+        activeChildLabel={activeChild?.label}
+        sectionLabel={currentSection?.label}
+        sectionId={currentSection?.id}
+      />
 
       {/* ── Mobile Horizontal Sticky Quick-Nav ── */}
       {currentSection.children &&
@@ -1691,10 +1681,10 @@ const isThemedSection =
 
                   {/* ── Sticky Sidebar ── */}
                   <aside className="hidden lg:flex flex-col flex-shrink-0 w-56">
-                    <div className={`sticky top-28 ${isThemedSection ? 'h-[440px] flex flex-col justify-between py-1' : 'pt-4 pb-8'}`}>
-                      <nav aria-label="Section topics" className={isThemedSection ? 'h-full flex flex-col justify-between' : ''}>
+                    <div className={`sticky top-28 ${(isThemedSection && !isResearchSection) ? 'h-[440px] flex flex-col justify-between py-1' : isResearchSection ? 'flex flex-col gap-4 py-1' : 'pt-4 pb-8'}`}>
+                      <nav aria-label="Section topics" className={(isThemedSection && !isResearchSection) ? 'h-full flex flex-col justify-between' : ''}>
                         <ul className={`relative flex flex-col ${
-                          isThemedSection ? 'h-full justify-between' : ''
+                          (isThemedSection && !isResearchSection) ? 'h-full justify-between' : 'space-y-4'
                         }`}>
                           {isThemedSection && (
                             <span
@@ -1706,7 +1696,7 @@ const isThemedSection =
                             const cid = child.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                             const isActive = activeSectionId === cid;
                             const num = String(index + 1).padStart(2, '0');
-                            const icon = isAch ? ACHIEVEMENTS_ICONS[cid] : isInno ? INNOVATIONS_ICONS[cid] : ABOUT_ICONS[cid];
+                            const icon = isAch ? ACHIEVEMENTS_ICONS[cid] : isInno ? INNOVATIONS_ICONS[cid] : isResearchSection ? RESEARCH_ICONS[cid] : ABOUT_ICONS[cid];
                             return (
                               <li key={index} className="relative z-10">
                                 {isThemedSection ? (
@@ -1817,16 +1807,18 @@ const isThemedSection =
                       >
                         {isAch ? (
                           /* Achievements: centered decorative section title */
-                          <div className="text-center mb-10">
-                            <h2 className="font-display text-3xl sm:text-4xl font-bold text-skcet-navy">
-                              {activeChild?.label}
-                            </h2>
-                            <div className="flex items-center justify-center gap-3 mt-3">
-                              <span className="h-px w-12 bg-skcet-gold/40" />
-                              <span className="text-skcet-gold text-lg">✦</span>
-                              <span className="h-px w-12 bg-skcet-gold/40" />
+                          activeSectionId === 'recent-highlights' ? null : (
+                            <div className="text-center mb-10">
+                              <h2 className="font-display text-3xl sm:text-4xl font-bold text-skcet-navy">
+                                {activeChild?.label}
+                              </h2>
+                              <div className="flex items-center justify-center gap-3 mt-3">
+                                <span className="h-px w-12 bg-skcet-gold/40" />
+                                <span className="text-skcet-gold text-lg">✦</span>
+                                <span className="h-px w-12 bg-skcet-gold/40" />
+                              </div>
                             </div>
-                          </div>
+                          )
                         ) : isInno ? (
                           /* Innovations: centered decorative section title */
                           <div className="text-center mb-10">

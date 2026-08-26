@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
   BookOpen,
   FileText,
@@ -47,6 +47,8 @@ const iconMap = {
 };
 
 const Exams = () => {
+  const { scrollY } = useScroll();
+  const [imgSrc, setImgSrc] = useState('/images/exams-header.jpg');
   const pathname = usePathname();
   const router = useRouter();
 
@@ -56,6 +58,14 @@ const Exams = () => {
   const activeDomainId = (currentSubdomain && EXAM_DOMAINS.some(d => d.id === currentSubdomain))
     ? currentSubdomain
     : 'regulations';
+
+  const activeDomain = EXAM_DOMAINS.find(d => d.id === activeDomainId);
+
+  const y = useTransform(scrollY, [0, 400], [0, 120]);
+  const scale = useTransform(scrollY, [0, 400], [1, 1.08]);
+  const imageOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textY = useTransform(scrollY, [0, 200], [0, -30]);
 
   // Forms Domain State
   const [selectedFormForPreview, setSelectedFormForPreview] = useState(null);
@@ -206,45 +216,85 @@ const Exams = () => {
   });
 
   const formCategories = ['All', ...new Set(EXAM_FORMS.map(f => f.category))];
-
   return (
-    <main className="min-h-screen bg-[#f8f9fa] pt-32 sm:pt-36 lg:pt-40 pb-24 text-gray-800">
-      
-      {/* ── Page Header (Clean White Theme matching Documents.jsx) ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+    <main className="min-h-screen bg-[#f8f9fa] pt-0 pb-24 text-gray-800">
+
+      {/* ── Dynamic Hero Header for Exams ── */}
+      <div className="relative w-full h-[200px] sm:h-[240px] md:h-[270px] lg:h-[300px] overflow-hidden bg-skcet-dark flex items-center justify-center">
+        <motion.div 
+          style={{ y, scale, opacity: imageOpacity }}
+          className="absolute inset-0 w-full h-full"
         >
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">
-            <Link href="/" className="hover:text-amber-800 transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-amber-800">Autonomous Examinations</span>
+          <img
+            src={imgSrc}
+            alt="Examinations Campus"
+            className="w-full h-full object-cover"
+            loading="eager"
+            onError={() => {
+              if (imgSrc !== '/images/hero-poster.webp') {
+                setImgSrc('/images/hero-poster.webp');
+              }
+            }}
+          />
+          <div className="absolute inset-0 bg-skcet-navy/70 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-b from-skcet-navy/30 via-skcet-navy/50 to-skcet-navy/80" />
+        </motion.div>
+
+        <motion.div 
+          style={{ opacity: textOpacity, y: textY }}
+          className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center justify-center h-full pt-16 sm:pt-20 lg:pt-24"
+        >
+          <div className="flex items-center gap-2 text-[9px] sm:text-xs font-light uppercase tracking-[0.2em] text-skcet-gold/90 mb-2">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span className="opacity-50">/</span>
+            <span className={activeDomain ? "opacity-50" : "text-white font-normal"}>Examinations</span>
+            {activeDomain && (
+              <>
+                <span className="opacity-50">/</span>
+                <span className="text-white font-normal">{activeDomain.label}</span>
+              </>
+            )}
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
-            <div>
-              <h1 className="font-display text-3xl sm:text-4xl font-bold text-skcet-navy tracking-tight">
-                Office of the Controller of Examinations
-              </h1>
-              <p className="text-gray-500 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
-                Autonomous examination frameworks, official downloadable forms, end-semester schedules, hall tickets, and results portal.
-              </p>
-            </div>
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-tight mb-3 drop-shadow-md">
+            {activeDomain?.label || "Examinations"}
+          </h1>
+          
+          <div className="w-12 h-[1px] bg-skcet-gold/60 rounded-full mb-3 shadow-sm" />
 
-            <div className="bg-white border border-gray-200 px-3.5 py-2 rounded-xl flex items-center gap-2.5 text-xs text-gray-700 shadow-2xs self-start md:self-auto">
-              <ShieldCheck size={18} className="text-amber-600" />
-              <div>
-                <div className="text-[11px] font-bold text-skcet-navy">Autonomous Examination Cell</div>
-                <div className="text-[10px] text-gray-500">Affiliated to Anna University, Chennai</div>
-              </div>
-            </div>
-          </div>
+          <p className="text-skcet-gold/90 font-light text-[10px] sm:text-xs flex items-center justify-center gap-2 flex-wrap tracking-wide drop-shadow-sm">
+            <span>28+ Years of Excellence</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+            <span>NAAC A++ Grade</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+            <span>NIRF Rank 100</span>
+          </p>
         </motion.div>
       </div>
 
-      {/* ── Mobile Horizontal Quick-Nav Bar ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        {/* Exam cell title & Info row */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-skcet-navy font-display">
+              Office of the Controller of Examinations
+            </h2>
+            <p className="text-gray-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+              Autonomous examination frameworks, official downloadable forms, end-semester schedules, hall tickets, and results portal.
+            </p>
+          </div>
+
+          <div className="bg-white border border-gray-200 px-3.5 py-2 rounded-xl flex items-center gap-2.5 text-xs text-gray-700 shadow-2xs self-start md:self-auto">
+            <ShieldCheck size={18} className="text-amber-600" />
+            <div>
+              <div className="text-[11px] font-bold text-skcet-navy">Autonomous Examination Cell</div>
+              <div className="text-[10px] text-gray-500">Affiliated to Anna University, Chennai</div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Main Layout: Sticky Sidebar Navigation + Single Selected Content View ── */}
+        {/* ── Mobile Horizontal Quick-Nav Bar ── */}
       <div className="lg:hidden sticky top-24 z-30 bg-[#f8f9fa]/95 backdrop-blur-md border-y border-gray-200 px-4 py-3 mb-8">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {EXAM_DOMAINS.map((domain) => {
@@ -270,7 +320,7 @@ const Exams = () => {
       </div>
 
       {/* ── Main Layout: Left Navigation + Selected Domain Content Pane ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start gap-8 relative">
+      <div className="flex flex-col lg:flex-row items-start gap-8 relative">
         
         {/* ── Desktop Left Navigation Sidebar ── */}
         <aside className="hidden lg:block lg:w-64 flex-shrink-0 lg:sticky lg:top-36 z-20">
@@ -1373,6 +1423,7 @@ const Exams = () => {
           </AnimatePresence>
         </div>
 
+      </div>
       </div>
 
       {/* ───────────────────────────────────────────────────────────────────────

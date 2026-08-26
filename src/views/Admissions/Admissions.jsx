@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import {
   GraduationCap,
   FileCheck,
@@ -55,6 +55,9 @@ const Admissions = () => {
   const pathname = usePathname();
   const router = useRouter();
 
+  const { scrollY } = useScroll();
+  const [imgSrc, setImgSrc] = useState('/images/admissions-header.jpg');
+
   // Derive active domain directly from URL (e.g. /admissions/cutoff -> 'cutoff', /admissions/fees -> 'cutoff')
   const pathParts = pathname.split('/').filter(Boolean);
   const currentSubdomain = pathParts[1];
@@ -62,6 +65,14 @@ const Admissions = () => {
   const activeDomainId = (normalizedSubdomain && ADMISSION_DOMAINS.some(d => d.id === normalizedSubdomain))
     ? normalizedSubdomain
     : '2026';
+
+  const activeDomain = ADMISSION_DOMAINS.find(d => d.id === activeDomainId);
+
+  const y = useTransform(scrollY, [0, 400], [0, 120]);
+  const scale = useTransform(scrollY, [0, 400], [1, 1.08]);
+  const imageOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+  const textY = useTransform(scrollY, [0, 200], [0, -30]);
 
   // Reporting Documents Modal state
   const [selectedReportingDoc, setSelectedReportingDoc] = useState(null);
@@ -175,52 +186,92 @@ const Admissions = () => {
   });
 
   return (
-    <main className="min-h-screen bg-[#f8f9fa] pt-32 sm:pt-36 lg:pt-40 pb-24 text-gray-800">
+    <main className="min-h-screen bg-[#f8f9fa] pt-0 pb-24 text-gray-800">
 
-      {/* ── Page Header matching Documents.jsx styling ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+      {/* ── Dynamic Hero Header for Admissions ── */}
+      <div className="relative w-full h-[200px] sm:h-[240px] md:h-[270px] lg:h-[300px] overflow-hidden bg-skcet-dark flex items-center justify-center">
+        <motion.div 
+          style={{ y, scale, opacity: imageOpacity }}
+          className="absolute inset-0 w-full h-full"
         >
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">
-            <Link href="/" className="hover:text-amber-800 transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-amber-800">Admissions 2026</span>
+          <img
+            src={imgSrc}
+            alt="Admissions Campus"
+            className="w-full h-full object-cover"
+            loading="eager"
+            onError={() => {
+              if (imgSrc !== '/images/hero-poster.webp') {
+                setImgSrc('/images/hero-poster.webp');
+              }
+            }}
+          />
+          <div className="absolute inset-0 bg-skcet-navy/70 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-b from-skcet-navy/30 via-skcet-navy/50 to-skcet-navy/80" />
+        </motion.div>
+
+        <motion.div 
+          style={{ opacity: textOpacity, y: textY }}
+          className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center justify-center h-full pt-16 sm:pt-20 lg:pt-24"
+        >
+          <div className="flex items-center gap-2 text-[9px] sm:text-xs font-light uppercase tracking-[0.2em] text-skcet-gold/90 mb-2">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span className="opacity-50">/</span>
+            <span className={activeDomain ? "opacity-50" : "text-white font-normal"}>Admissions</span>
+            {activeDomain && (
+              <>
+                <span className="opacity-50">/</span>
+                <span className="text-white font-normal">{activeDomain.label}</span>
+              </>
+            )}
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
-            <div>
-              <h1 className="font-display text-3xl sm:text-4xl font-bold text-skcet-navy tracking-tight">
-                Admissions & Cut-off Portal 2026–2027
-              </h1>
-              <p className="text-gray-500 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
-                Join a premier autonomous institution ranked among India&apos;s top engineering colleges with NBA Tier-I accreditations, reporting documents, and cut-off calculator.
-              </p>
-            </div>
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-tight mb-3 drop-shadow-md">
+            {activeDomain?.label || "Admissions"}
+          </h1>
+          
+          <div className="w-12 h-[1px] bg-skcet-gold/60 rounded-full mb-3 shadow-sm" />
 
-            <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
-              <div className="bg-white border border-gray-200 px-3.5 py-2 rounded-xl flex items-center gap-2.5 text-xs text-gray-700 shadow-2xs">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>TNEA Counseling Code: <strong className="text-skcet-navy font-bold font-mono">2718</strong></span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsApplyModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-skcet-gold hover:bg-amber-400 text-skcet-dark font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
-              >
-                <Sparkles size={14} />
-                <span>Apply / Enquire Now</span>
-              </button>
-            </div>
-          </div>
+          <p className="text-skcet-gold/90 font-light text-[10px] sm:text-xs flex items-center justify-center gap-2 flex-wrap tracking-wide drop-shadow-sm">
+            <span>28+ Years of Excellence</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+            <span>NAAC A++ Grade</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+            <span>NIRF Rank 100</span>
+          </p>
         </motion.div>
       </div>
 
-      {/* ── Main Layout: Sticky Sidebar Navigation + Single Selected Content View ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start gap-8 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        {/* TNEA code & Apply buttons row */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-skcet-navy font-display">
+              Admissions & Cut-off Portal 2026–2027
+            </h2>
+            <p className="text-gray-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+              Join a premier autonomous institution ranked among India&apos;s top engineering colleges with NBA Tier-I accreditations, reporting documents, and cut-off calculator.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
+            <div className="bg-white border border-gray-200 px-3.5 py-2 rounded-xl flex items-center gap-2.5 text-xs text-gray-700 shadow-2xs">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>TNEA Counseling Code: <strong className="text-skcet-navy font-bold font-mono">2718</strong></span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsApplyModalOpen(true)}
+              className="px-4 py-2 rounded-xl bg-skcet-gold hover:bg-amber-400 text-skcet-dark font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+            >
+              <Sparkles size={14} />
+              <span>Apply / Enquire Now</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ── Main Layout: Sticky Sidebar Navigation + Single Selected Content View ── */}
+        <div className="flex flex-col lg:flex-row items-start gap-8 relative">
 
         {/* ── Left Sticky Subdomain Navigation ── */}
         <aside className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-36 z-20">
@@ -1432,6 +1483,7 @@ const Admissions = () => {
           </AnimatePresence>
         </div>
 
+      </div>
       </div>
 
       {/* ── Official Reporting Document PDF Preview & Print Modal (Matching Uploaded Screenshots) ── */}
