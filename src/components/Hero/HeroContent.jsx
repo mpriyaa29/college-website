@@ -76,7 +76,7 @@ const HeroContent = () => {
             alt="NAAC, NBA, NIRF, Ministry of Education Rankings" 
             className="h-10 sm:h-14 w-auto object-contain"
             loading="eager"
-            fetchpriority="high"
+            fetchPriority="high"
           />
         </div>
 
@@ -95,7 +95,7 @@ const HeroContent = () => {
               bg-white
             "
             loading="eager"
-            fetchpriority="high"
+            fetchPriority="high"
           />
         </a>
       </motion.div>

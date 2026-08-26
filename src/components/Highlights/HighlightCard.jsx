@@ -1,5 +1,7 @@
+"use client";
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
@@ -8,7 +10,7 @@ const HighlightCard = ({ highlight }) => {
 
   return (
     <Link 
-      to={`/highlights/${id}`} 
+      href={`/highlights/${id}`} 
       className="group block relative w-full aspect-[4/5] overflow-hidden rounded-xl bg-skcet-dark border border-white/10 shadow-lg cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-skcet-gold focus-visible:outline-offset-2"
       aria-label={`View highlight: ${title}`}
     >

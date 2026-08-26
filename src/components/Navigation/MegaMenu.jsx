@@ -1,4 +1,7 @@
-import { Link, useLocation } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 /**
  * NavItem
@@ -7,13 +10,13 @@ import { Link, useLocation } from 'react-router-dom';
  * ──────────────────────────────────────────────────────────────────
  */
 export const NavItem = ({ item }) => {
-  const location = useLocation();
-  const isActive = location.pathname.startsWith(item.path);
+  const pathname = usePathname();
+  const isActive = pathname.startsWith(item.path);
 
   return (
     <li className="relative">
       <Link
-        to={item.path}
+        href={item.path}
         className={`
           flex items-center
           text-[11px] lg:text-xs xl:text-sm font-medium tracking-wide

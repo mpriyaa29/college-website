@@ -1,0 +1,5 @@
+import SectionPage from '../../../src/views/SectionPage/SectionPage';
+
+export default function AchievementsRoute() {
+  return <SectionPage />;
+}

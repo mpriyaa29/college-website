@@ -1,5 +1,8 @@
+"use client";
+
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MapPin, Phone, Mail, Globe, ArrowUp, Award } from 'lucide-react';
 
 const SISTER_INSTITUTIONS = [
@@ -38,8 +41,8 @@ const SITEMAP_COL_2 = [
 ];
 
 const Footer = () => {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -190,7 +193,7 @@ const Footer = () => {
               {INSTITUTIONAL_PORTALS.map((portal) => (
                 <li key={portal.label}>
                   <Link
-                    to={portal.path}
+                    href={portal.path}
                     className="group flex items-start gap-2 hover:text-amber-300 transition-colors duration-200"
                   >
                     <span className="text-amber-400 font-bold group-hover:translate-x-0.5 transition-transform">›</span>
@@ -213,7 +216,7 @@ const Footer = () => {
                 {SITEMAP_COL_1.map((link) => (
                   <li key={link.label}>
                     <Link
-                      to={link.path}
+                      href={link.path}
                       className="hover:text-amber-300 transition-colors duration-200 block whitespace-nowrap"
                     >
                       {link.label}
@@ -227,7 +230,7 @@ const Footer = () => {
                 {SITEMAP_COL_2.map((link) => (
                   <li key={link.label}>
                     <Link
-                      to={link.path}
+                      href={link.path}
                       className="hover:text-amber-300 transition-colors duration-200 block whitespace-nowrap"
                     >
                       {link.label}
@@ -288,15 +291,15 @@ const Footer = () => {
           <p>© 2026 Sri Krishna College of Engineering and Technology (SKCET). All rights reserved.</p>
 
           <div className="flex items-center gap-3">
-            <Link to="/documents/policies" className="hover:text-amber-300 transition-colors">
+            <Link href="/documents/policies" className="hover:text-amber-300 transition-colors">
               Privacy Policy
             </Link>
             <span>•</span>
-            <Link to="/documents/policies" className="hover:text-amber-300 transition-colors">
+            <Link href="/documents/policies" className="hover:text-amber-300 transition-colors">
               Terms of Use
             </Link>
             <span>•</span>
-            <Link to="/documents/mandatory-disclosures" className="hover:text-amber-300 transition-colors">
+            <Link href="/documents/mandatory-disclosures" className="hover:text-amber-300 transition-colors">
               RTI & Mandatory Disclosures
             </Link>
           </div>

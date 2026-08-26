@@ -1,6 +1,8 @@
+"use client";
+
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, BookOpen, Trophy, Activity, Heart, Users, Briefcase, Award, Monitor, Landmark, CheckCircle, Lightbulb } from 'lucide-react';
 import { exploreGroups } from '../../data/homeData';
 
@@ -65,7 +67,7 @@ const Explore = () => {
                 {group.links.map((link, linkIdx) => (
                   <Link 
                     key={linkIdx} 
-                    to={link.path}
+                    href={link.path}
                     className="group flex flex-col justify-between p-5 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 h-[120px]"
                   >
                     <div className="text-white/40 group-hover:text-skcet-gold transition-colors duration-300">

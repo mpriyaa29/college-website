@@ -1,5 +1,7 @@
+"use client";
+
 import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 // ─── Feature data ─────────────────────────────────────────────────────────────
@@ -71,7 +73,7 @@ const FeaturePanel = ({ feature, index }) => {
     >
       {/* Accessible full-block link */}
       <Link
-        to={feature.route}
+        href={feature.route}
         className="absolute inset-0 z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-skcet-gold focus-visible:outline-offset-[-3px]"
         aria-label={`${feature.titleNormal} ${feature.titleItalic}`.trim()}
         tabIndex={0}

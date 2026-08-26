@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+"use client";
+
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { NAV_ITEMS } from '../../data/navigation';
@@ -86,7 +88,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
                 {NAV_ITEMS.map((item) => (
                   <li key={item.id}>
                     <Link
-                      to={item.path}
+                      href={item.path}
                         onClick={onClose}
                         className="
                           flex items-center
