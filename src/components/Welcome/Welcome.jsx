@@ -4,7 +4,7 @@ import { statisticsData } from '../../data/homeData';
 
 const Welcome = () => {
   return (
-    <section className="bg-white py-24 px-4 sm:px-8 relative overflow-hidden">
+    <section id="discover" className="bg-white py-24 px-4 sm:px-8 relative overflow-hidden">
       {/* Background elements */}
       <div
         className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none"

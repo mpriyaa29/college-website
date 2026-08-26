@@ -64,40 +64,21 @@ const HeroContent = () => {
         for a Better Future
       </motion.h1>
 
-      {/* ── Cards Row (Accreditations & Admissions) ── */}
+      {/* ── Cards Row (Accreditations) ── */}
       <motion.div 
-        className="w-full flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-10 mb-8"
+        className="w-full flex justify-center mb-8"
         variants={fadeUp}
       >
         {/* ── Accreditation badges ── */}
-        <div className="inline-block bg-white p-2 sm:p-3 rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.2)]">
-          <img 
-            src="/images/accreditations.png" 
-            alt="NAAC, NBA, NIRF, Ministry of Education Rankings" 
-            className="h-10 sm:h-14 w-auto object-contain"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </div>
-
-        {/* ── Admission Card ── */}
-        <a
-          href="/admissions/2026"
-          className="group block focus:outline-none focus-visible:ring-1 focus-visible:ring-skcet-gold/60 rounded"
-        >
+        <div className="inline-block">
           <img
-            src="/images/admission-2026.png"
-            alt="Admission 2026 TNEA CODE 2718 - Documents Required"
-            className="
-              w-full h-auto max-w-[280px] sm:max-w-[320px]
-              rounded-sm shadow-[0_8px_40px_rgba(0,0,0,0.35)]
-              group-hover:scale-[1.02] transition-transform duration-400
-              bg-white
-            "
-            loading="eager"
-            fetchPriority="high"
-          />
-        </a>
+  src="/images/accreditations.png"
+  alt="NAAC, NBA, NIRF, Ministry of Education Rankings"
+  className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto object-contain"
+  loading="eager"
+  fetchPriority="high"
+/>
+        </div>
       </motion.div>
     </motion.div>
   );
