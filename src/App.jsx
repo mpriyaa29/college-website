@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Navigation from './components/Navigation/Navigation';
 import Footer from './components/Footer/Footer';
+import SmoothScroll from './components/SmoothScroll/SmoothScroll';
+import BackToTop from './components/BackToTop/BackToTop';
 
 import Home from './pages/Home/Home';
 import SectionPage from './pages/SectionPage/SectionPage';
@@ -29,6 +31,9 @@ import { NAV_ITEMS } from './data/navigation';
 const App = () => {
   return (
     <BrowserRouter>
+      {/* High-performance momentum smooth scrolling & anchor handler */}
+      <SmoothScroll />
+
       {/* Fixed navigation overlays all pages */}
       <Navigation />
 
@@ -88,6 +93,9 @@ const App = () => {
       </Routes>
 
       <Footer />
+
+      {/* Floating Smooth Scroll Back to Top Button */}
+      <BackToTop />
     </BrowserRouter>
   );
 };

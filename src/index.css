@@ -14,6 +14,27 @@ html {
   overflow-x: clip;
 }
 
+/* ─── Lenis Smooth Scroll CSS ──────────────────────────────────── */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background-color: #0d1529;
@@ -134,7 +155,7 @@ body {
   to   { clip-path: inset(0 0% 0 0); }
 }
 
-/* ─── Prevent layout shift on video fallback ───────────────────── */
+/* ─── Prevent layout shift on video fallback & GPU layer isolation ─── */
 .hero-section {
   position: relative;
   width: 100vw;
@@ -142,6 +163,9 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout paint;
 }
 
 /* ─── Print styling for official payment receipt ───────────────── */

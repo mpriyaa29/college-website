@@ -1,63 +1,110 @@
-import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
 
 /**
  * VideoBackground
- * ──────────────────────────────────────────────────────────────────
- * Full-viewport cinematic video background.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Full-viewport cinematic video background with ultra-high scroll performance.
  *
- * Loading strategy:
- *  1. Hero poster (hero-poster.webp) renders immediately as a CSS
- *     background-image — no JavaScript, no waiting.
- *  2. The <link rel="preload" fetchpriority="high"> in index.html
- *     starts fetching both the poster and the video at the very top
- *     of the network waterfall, before React even boots.
- *  3. The <video> element uses preload="auto" so the browser buffers
- *     as much as needed to begin playback immediately.
- *  4. onLoadedData fires as soon as the first frame is decoded —
- *     earlier than onCanPlay — giving the fastest possible fade-in.
- *  5. Smooth opacity crossfade hides the poster→video switch.
- *
- * – Autoplay, muted, loop, playsInline for mobile/browser compat.
- * – Overlay gradient keeps hero text readable.
- * ──────────────────────────────────────────────────────────────────
+ * Performance Optimizations:
+ * 1. IntersectionObserver: Automatically pauses video decoding when scrolled
+ *    out of viewport to eliminate 100% of GPU/CPU compositor contention during scroll.
+ * 2. Hardware Acceleration: uses translate3d, will-change, and backface-visibility
+ *    to isolate the video in a dedicated GPU compositor layer.
+ * 3. CSS transitions instead of JS-driven render loops for smooth fade-in.
+ * 4. Preloaded video + fallback poster with zero layout shift.
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 const VideoBackground = () => {
+  const containerRef = useRef(null);
   const videoRef = useRef(null);
   const [videoError, setVideoError] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
 
+  // Handle video error
   const handleVideoError = () => {
     setVideoError(true);
   };
 
-  // onLoadedData fires as soon as the first frame is available —
-  // earlier than onCanPlay — so we use it as the primary trigger.
+  // Video ready trigger
   const handleVideoReady = () => {
     setVideoReady(true);
   };
 
+  // ── Intersection Observer: Pause video decoding when out of viewport ──
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    const containerEl = containerRef.current;
+    if (!videoEl || !containerEl) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // In view: play video
+          if (videoEl.paused) {
+            videoEl.play().catch(() => {
+              // Autoplay policy fallback
+            });
+          }
+        } else {
+          // Scrolled out of view: pause decoding to free GPU/CPU for buttery scrolling
+          if (!videoEl.paused) {
+            videoEl.pause();
+          }
+        }
+      },
+      {
+        threshold: [0, 0.1, 0.5],
+        rootMargin: '100px 0px 100px 0px',
+      }
+    );
+
+    observer.observe(containerEl);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden bg-skcet-dark">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 w-full h-full overflow-hidden bg-skcet-dark"
+      style={{
+        transform: 'translate3d(0, 0, 0)',
+        WebkitTransform: 'translate3d(0, 0, 0)',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        contain: 'layout paint',
+      }}
+    >
       {/* ── Static Poster / Fallback ──────────────────────────────
           Renders immediately; stays visible until the video fades in.
-          The poster is preloaded in <head> so it appears with zero delay.
       ── */}
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/hero-poster.webp')" }}
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transition-opacity duration-700 pointer-events-none"
+        style={{
+          backgroundImage: "url('/images/hero-poster.webp')",
+          opacity: videoReady ? 0.3 : 1,
+          transform: 'translateZ(0)',
+        }}
         aria-hidden="true"
       />
 
       {/* ── Hero Video ────────────────────────────────────────────
-          Preloaded + high-priority via <link rel="preload"> in index.html.
-          preload="auto" tells the browser to buffer aggressively.
-          Fades in smoothly once the first frame is decoded.
+          GPU hardware accelerated, isolated composite layer.
       ── */}
       {!videoError && (
-        <motion.video
+        <video
           ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-out pointer-events-none ${
+            videoReady ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            transform: 'translate3d(0, 0, 0)',
+            WebkitTransform: 'translate3d(0, 0, 0)',
+            willChange: 'opacity',
+            backfaceVisibility: 'hidden',
+          }}
           autoPlay
           muted
           loop
@@ -65,21 +112,21 @@ const VideoBackground = () => {
           preload="auto"
           poster="/images/hero-poster.webp"
           onError={handleVideoError}
-          onLoadedData={handleVideoReady}   // earliest trigger: first frame decoded
-          onCanPlay={handleVideoReady}       // secondary trigger for broader compat
-          onPlaying={handleVideoReady}       // final fallback if earlier events miss
-          initial={{ opacity: 0 }}
-          animate={{ opacity: videoReady ? 1 : 0 }}
-          transition={{ duration: 1.0, ease: "easeOut" }}
+          onLoadedData={handleVideoReady}
+          onCanPlay={handleVideoReady}
+          onPlaying={handleVideoReady}
           aria-hidden="true"
         >
-          {/* MP4 listed first — universally supported, matches the preload hint */}
           <source src="/videos/skcet-campus.mp4" type="video/mp4" />
-        </motion.video>
+        </video>
       )}
 
       {/* ── Dark cinematic overlay ── */}
-      <div className="absolute inset-0 hero-overlay" aria-hidden="true" />
+      <div
+        className="absolute inset-0 hero-overlay pointer-events-none"
+        style={{ transform: 'translateZ(0)' }}
+        aria-hidden="true"
+      />
 
       {/* ── Subtle vignette for depth ── */}
       <div
@@ -87,6 +134,7 @@ const VideoBackground = () => {
         style={{
           background:
             'radial-gradient(ellipse at center, transparent 40%, rgba(10,18,40,0.5) 100%)',
+          transform: 'translateZ(0)',
         }}
         aria-hidden="true"
       />
