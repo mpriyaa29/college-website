@@ -1,5 +1,5 @@
-import SectionPage from '../../../src/views/SectionPage/SectionPage';
+import Placements from '../../../src/views/Placements/Placements';
 
 export default function PlacementsRoute() {
-  return <SectionPage />;
+  return <Placements />;
 }

@@ -1,5 +1,5 @@
-import SectionPage from '../../../src/views/SectionPage/SectionPage';
+import Accreditations from '../../../src/views/Accreditations/Accreditations';
 
 export default function AccreditationsRoute() {
-  return <SectionPage />;
+  return <Accreditations />;
 }

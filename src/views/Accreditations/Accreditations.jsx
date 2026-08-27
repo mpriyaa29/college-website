@@ -1,6 +1,19 @@
+"use client";
+
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function Accreditations() {
+    const { scrollY } = useScroll();
+    const [imgSrc, setImgSrc] = useState('/images/accreditations-header.jpg');
+
+    const y = useTransform(scrollY, [0, 400], [0, 120]);
+    const scale = useTransform(scrollY, [0, 400], [1, 1.08]);
+    const imageOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+    const textOpacity = useTransform(scrollY, [0, 200], [1, 0]);
+    const textY = useTransform(scrollY, [0, 200], [0, -30]);
+
     const [activeDomain, setActiveDomain] = useState('naac');
 
     const navItems = [
@@ -418,7 +431,54 @@ export default function Accreditations() {
       `}</style>
 
             {/* paddingTop is added to push content below a fixed global navbar if present */}
-            <div className="acc-wrapper pt-20">
+            <div className="acc-wrapper pt-0">
+                {/* ── Dynamic Hero Header for Accreditations ── */}
+                <div className="relative w-full h-[200px] sm:h-[240px] md:h-[270px] lg:h-[300px] overflow-hidden bg-skcet-dark flex items-center justify-center">
+                    <motion.div 
+                        style={{ y, scale, opacity: imageOpacity }}
+                        className="absolute inset-0 w-full h-full"
+                    >
+                        <img
+                            src={imgSrc}
+                            alt="Accreditations Campus"
+                            className="w-full h-full object-cover"
+                            loading="eager"
+                            onError={() => {
+                                if (imgSrc !== '/images/hero-poster.webp') {
+                                    setImgSrc('/images/hero-poster.webp');
+                                }
+                            }}
+                        />
+                        <div className="absolute inset-0 bg-skcet-navy/70 mix-blend-multiply" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-skcet-navy/30 via-skcet-navy/50 to-skcet-navy/80" />
+                    </motion.div>
+
+                    <motion.div 
+                        style={{ opacity: textOpacity, y: textY }}
+                        className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center justify-center h-full pt-16 sm:pt-20 lg:pt-24"
+                    >
+                        <div className="flex items-center gap-2 text-[9px] sm:text-xs font-light uppercase tracking-[0.2em] text-skcet-gold/90 mb-2">
+                            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                            <span className="opacity-50">/</span>
+                            <span className="text-white font-normal">Accreditations</span>
+                        </div>
+
+                        <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-tight mb-3 drop-shadow-md">
+                            Accreditations
+                        </h1>
+                        
+                        <div className="w-12 h-[1px] bg-skcet-gold/60 rounded-full mb-3 shadow-sm" />
+
+                        <p className="text-skcet-gold/90 font-light text-[10px] sm:text-xs flex items-center justify-center gap-2 flex-wrap tracking-wide drop-shadow-sm">
+                            <span>28+ Years of Excellence</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+                            <span>NAAC A++ Grade</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-skcet-gold/40" />
+                            <span>NIRF Rank 100</span>
+                        </p>
+                    </motion.div>
+                </div>
+
                 <div className="layout">
                     {/* ===================== SIDEBAR ===================== */}
                     <nav className="sidebar" id="sidebar">
